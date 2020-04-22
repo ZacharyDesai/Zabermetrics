@@ -220,6 +220,7 @@ function fillDraft(teamNeeds, teamProspects, roundNum, numPicks) {
   }
 }
 
+/* Sorts each team's prospects array by the desired value for each player (based on prospect rankings and team needs) */
 function sortTeamProspects() {
   return function(a, b) {
     return a.val - b.val;
