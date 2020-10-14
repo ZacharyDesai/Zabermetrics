@@ -1,6 +1,8 @@
 # Zabermetrics
 Scripts for spreadsheets on my sports site: https://sites.google.com/view/zabermetrics/
 
+Auto-updating and computed sports stats, rankings, & simulations
+
 ## CollegeFootball.js
 
 ### Entire Season Simulation (Live Updates) + Standings, Rankings, Playoffs, etc.
