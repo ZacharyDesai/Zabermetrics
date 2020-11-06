@@ -14,8 +14,8 @@ Link to spreadsheet: https://drive.google.com/open?id=1iFOnIb6fqgMH2ud_iFt6IHrpx
 
 ### Entire Season Simulation (Live Updates)
 
-Curious how the season will turn out - at any point in the season? The following spreadsheet simulates the entire NFL season (or what remains of it), according to team ratings computed by formulas. By the end of the season, standings are generated (including DIV record, CONF record, SOV, and SOS), and then playoffs are simulated.
-Link to spreadsheet: https://docs.google.com/spreadsheets/d/19oNxgwIk7SP7oBXO-UzeYr6NlNigN0tGlLfoqPEx1z8/edit?usp=sharing
+Curious how the season will turn out - at any point in the season? The following spreadsheet simulates the entire NFL season (or what remains of it), according to team efficiency ratings (DVOA), adjusted for injuries, trades, or other personnel changes. Each match-up is also adjusted for offensive and defensive pass/rush strengths and tendencies. By the end of the season, standings are generated (including DIV record, CONF record, SOV, and SOS), and then playoffs are simulated.
+Link to spreadsheet: https://docs.google.com/spreadsheets/d/16sSrkzM5X6FTm658kXWW4FWpir5tBELfvzTNCJkYS4A/edit?usp=sharing
 
 ## NFLDraft.js
 
