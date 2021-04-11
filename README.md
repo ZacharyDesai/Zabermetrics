@@ -13,16 +13,16 @@ Link to spreadsheet: https://docs.google.com/spreadsheets/d/1iFOnIb6fqgMH2ud_iFt
 
 ## NFL.js
 
-### Entire Season Simulation (Live Updates) + Player & Team Ratings + Mock Draft and Prospect Ratings
+### Entire Season Simulation (Live Updates) + Player & Team Ratings
 
-Curious how the season will turn out - at any point in the season? This spreadsheet simulates the entire NFL season (or what remains of it), according to team ratings, a compilation of statistical player ratings, all accessible in the Lineups tab. In the offseason, prospects are graded based on their college statistics and projected outlook, and a mock draft based off these grades is available for the first round of the draft.
+Curious how the season will turn out - at any point in the season? This spreadsheet simulates the entire NFL season (or what remains of it), according to team ratings, a compilation of statistical player ratings, all accessible in the Lineups tab. Rookie grades are based off their prospect ratings (see "NFL Draft" below).
 
 Link to spreadsheet: https://docs.google.com/spreadsheets/d/19oNxgwIk7SP7oBXO-UzeYr6NlNigN0tGlLfoqPEx1z8/
 
 ## NFLDraft.js
 
-### NFL Draft LIVE Simulator
+### NFL Draft LIVE Simulator + Prospect Grades
 
-Curious about who each team is eyeing throughout the draft? This spreadsheet simulates what remains of the NFL Draft and displays a list of top available prospects for each team's pick. This is updated after every announced pick in the draft, so viewers can follow along live throughout the draft. The top prospects are based off a combination of prospect ratings and team needs.
+Curious about who each team is eyeing throughout the draft? This simulator, which is updated live throughout the NFL Draft, displays a list of top available prospects for each team's pick and simulates who each team will pick for all 7 rounds. Viewers are free to follow along live throughout the draft. The top prospects are based off their draft value according to analysts (their projected rounds), their high school and college success (primarily college statistics and awards, with high school recruiting grades taken into account), and their derived athleticism (using measurements of a prospect's size, speed, explosion, and agility), in roughly a 50%-25%-25% split, respectively.
 
 Link to spreadsheet: https://docs.google.com/spreadsheets/d/1FdHHCMQq2Gnk29CKe3Y0diz6VQgxX-_n4LLkgOs99x4/
