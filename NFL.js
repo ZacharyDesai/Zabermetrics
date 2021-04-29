@@ -1,22 +1,9 @@
 function main() {
   
   // UPDATE EACH WEEK:
-  const numWeeksDone = 8; // equivalent to the previous week #
+  const numWeeksDone = 0; // equivalent to the previous week #
   
-  let ratingsOVR   = {"BUF":[], "MIA":[], "NE":[], "NYJ":[], "BAL":[], "CIN":[], "CLE":[], "PIT":[], "HOU":[], "IND":[], "JAX":[], "TEN":[], "DEN":[], "KC":[], "LAC":[], "LV":[],
-                  "DAL":[], "NYG":[], "PHI":[], "WAS":[], "CHI":[], "DET":[], "GB":[], "MIN":[], "ATL":[], "CAR":[], "NO":[], "TB":[], "ARI":[], "LAR":[], "SEA":[], "SF":[]};
-  let ratingsOFF   = {"BUF":[], "MIA":[], "NE":[], "NYJ":[], "BAL":[], "CIN":[], "CLE":[], "PIT":[], "HOU":[], "IND":[], "JAX":[], "TEN":[], "DEN":[], "KC":[], "LAC":[], "LV":[],
-                  "DAL":[], "NYG":[], "PHI":[], "WAS":[], "CHI":[], "DET":[], "GB":[], "MIN":[], "ATL":[], "CAR":[], "NO":[], "TB":[], "ARI":[], "LAR":[], "SEA":[], "SF":[]};
-  let ratingsDEF   = {"BUF":[], "MIA":[], "NE":[], "NYJ":[], "BAL":[], "CIN":[], "CLE":[], "PIT":[], "HOU":[], "IND":[], "JAX":[], "TEN":[], "DEN":[], "KC":[], "LAC":[], "LV":[],
-                  "DAL":[], "NYG":[], "PHI":[], "WAS":[], "CHI":[], "DET":[], "GB":[], "MIN":[], "ATL":[], "CAR":[], "NO":[], "TB":[], "ARI":[], "LAR":[], "SEA":[], "SF":[]};
-  let ratingsPassOFF   = {"BUF":[], "MIA":[], "NE":[], "NYJ":[], "BAL":[], "CIN":[], "CLE":[], "PIT":[], "HOU":[], "IND":[], "JAX":[], "TEN":[], "DEN":[], "KC":[], "LAC":[], "LV":[],
-                  "DAL":[], "NYG":[], "PHI":[], "WAS":[], "CHI":[], "DET":[], "GB":[], "MIN":[], "ATL":[], "CAR":[], "NO":[], "TB":[], "ARI":[], "LAR":[], "SEA":[], "SF":[]};
-  let ratingsRushOFF   = {"BUF":[], "MIA":[], "NE":[], "NYJ":[], "BAL":[], "CIN":[], "CLE":[], "PIT":[], "HOU":[], "IND":[], "JAX":[], "TEN":[], "DEN":[], "KC":[], "LAC":[], "LV":[],
-                  "DAL":[], "NYG":[], "PHI":[], "WAS":[], "CHI":[], "DET":[], "GB":[], "MIN":[], "ATL":[], "CAR":[], "NO":[], "TB":[], "ARI":[], "LAR":[], "SEA":[], "SF":[]};
-  let ratingsPassDEF   = {"BUF":[], "MIA":[], "NE":[], "NYJ":[], "BAL":[], "CIN":[], "CLE":[], "PIT":[], "HOU":[], "IND":[], "JAX":[], "TEN":[], "DEN":[], "KC":[], "LAC":[], "LV":[],
-                  "DAL":[], "NYG":[], "PHI":[], "WAS":[], "CHI":[], "DET":[], "GB":[], "MIN":[], "ATL":[], "CAR":[], "NO":[], "TB":[], "ARI":[], "LAR":[], "SEA":[], "SF":[]};
-  let ratingsRushDEF   = {"BUF":[], "MIA":[], "NE":[], "NYJ":[], "BAL":[], "CIN":[], "CLE":[], "PIT":[], "HOU":[], "IND":[], "JAX":[], "TEN":[], "DEN":[], "KC":[], "LAC":[], "LV":[],
-                  "DAL":[], "NYG":[], "PHI":[], "WAS":[], "CHI":[], "DET":[], "GB":[], "MIN":[], "ATL":[], "CAR":[], "NO":[], "TB":[], "ARI":[], "LAR":[], "SEA":[], "SF":[]};
+  let ratings = {};
   let schedule  = {"BUF":[], "MIA":[], "NE":[], "NYJ":[], "BAL":[], "CIN":[], "CLE":[], "PIT":[], "HOU":[], "IND":[], "JAX":[], "TEN":[], "DEN":[], "KC":[], "LAC":[], "LV":[],
                   "DAL":[], "NYG":[], "PHI":[], "WAS":[], "CHI":[], "DET":[], "GB":[], "MIN":[], "ATL":[], "CAR":[], "NO":[], "TB":[], "ARI":[], "LAR":[], "SEA":[], "SF":[]};
   let standings = {"BUF":{}, "MIA":{}, "NE":{}, "NYJ":{}, "BAL":{}, "CIN":{}, "CLE":{}, "PIT":{}, "HOU":{}, "IND":{}, "JAX":{}, "TEN":{}, "DEN":{}, "KC":{}, "LAC":{}, "LV":{},
@@ -31,10 +18,10 @@ function main() {
   let standingsNFCWest  = {"ARI":{}, "LAR":{}, "SEA":{}, "SF":{}};
 
   clear(numWeeksDone);
-  loadRatings(ratingsOVR, ratingsOFF, ratingsDEF, ratingsPassOFF, ratingsRushOFF, ratingsPassDEF, ratingsRushDEF);
+  loadRatings(ratings);
   loadSchedule(schedule, numWeeksDone);
-  simGames(ratingsOVR, ratingsOFF, ratingsDEF, ratingsPassOFF, ratingsRushOFF, ratingsPassDEF, ratingsRushDEF, schedule, numWeeksDone, "AFC");
-  simGames(ratingsOVR, ratingsOFF, ratingsDEF, ratingsPassOFF, ratingsRushOFF, ratingsPassDEF, ratingsRushDEF, schedule, numWeeksDone, "NFC");
+  simGames(ratings, schedule, numWeeksDone, "AFC");
+  simGames(ratings, schedule, numWeeksDone, "NFC");
   calculateRecords("AFC", standings, standingsAFCEast, standingsAFCNorth, standingsAFCSouth, standingsAFCWest);
   calculateRecords("NFC", standings, standingsNFCEast, standingsNFCNorth, standingsNFCSouth, standingsNFCWest);
   calculateStrengthMetrics("AFC", standings, standingsAFCEast, standingsAFCNorth, standingsAFCSouth, standingsAFCWest);
@@ -60,7 +47,7 @@ function main() {
 /* Clears any previous simulated material from the spreadsheet to reset it */
 function clear(numWeeksDone) {
   const sheetStandings = SpreadsheetApp.getActive().getSheetByName("Standings");
-  for (let r = 1; r <= 20; r++) {
+  for (let r = 1; r <= 21; r++) {
     if (r % 5 === 1) {
       continue;
     }
@@ -68,11 +55,11 @@ function clear(numWeeksDone) {
       sheetStandings.getRange(r, c).setValue("");
     }
   }
-  if (numWeeksDone > 20) {
+  if (numWeeksDone > 17) {
     return;
   }
   const sheetAFC = SpreadsheetApp.getActive().getSheetByName("AFC");
-  for (let r = 4 + numWeeksDone; r <= 24; r++) {
+  for (let r = 4 + numWeeksDone; r <= 21; r++) {
     for (let c = 2; c <= 17; c++) {
       sheetAFC.getRange(r, c).setBackground("white");
     }
@@ -81,7 +68,7 @@ function clear(numWeeksDone) {
     sheetAFC.getRange(3, c).setValue("--");
   }
   const sheetNFC = SpreadsheetApp.getActive().getSheetByName("NFC");
-  for (let r = 4 + numWeeksDone; r <= 24; r++) {
+  for (let r = 4 + numWeeksDone; r <= 21; r++) {
     for (let c = 2; c <= 17; c++) {
       sheetNFC.getRange(r, c).setBackground("white");
     }
@@ -92,66 +79,38 @@ function clear(numWeeksDone) {
 }
 
 /* Loads all ratings for each team */
-function loadRatings(ratingsOVR, ratingsOFF, ratingsDEF, ratingsPassOFF, ratingsRushOFF, ratingsPassDEF, ratingsRushDEF) {
-  const sheet = SpreadsheetApp.getActive().getSheetByName("Corrections");
-  for (let c = 1; c <= 160; c += 5) {
-    const team = sheet.getRange(1, c).getValue();
-    let teamRatingsOVR = [];
-    let teamRatingsOFF = [];
-    let teamRatingsDEF = [];
-    let teamRatingsPassOFF = [];
-    let teamRatingsRushOFF = [];
-    let teamRatingsPassDEF = [];
-    let teamRatingsRushDEF = [];
-    for (let r = 0; r <= 17; r++) {
-      const passOFF = sheet.getRange(r + 3, c + 1).getValue();
-      const rushOFF = sheet.getRange(r + 3, c + 2).getValue();
-      const passDEF = sheet.getRange(r + 3, c + 3).getValue();
-      const rushDEF = sheet.getRange(r + 3, c + 4).getValue();
-      const OFF = passOFF + rushOFF;
-      const DEF = passDEF + rushDEF;
-      const OVR = OFF + DEF;
-      teamRatingsOVR[r] = OVR;
-      teamRatingsOFF[r] = OFF;
-      teamRatingsDEF[r] = DEF;
-      teamRatingsPassOFF[r] = passOFF;
-      teamRatingsRushOFF[r] = rushOFF;
-      teamRatingsPassDEF[r] = passDEF;
-      teamRatingsRushDEF[r] = rushDEF;
-    }
-    ratingsOVR[team] = teamRatingsOVR;
-    ratingsOFF[team] = teamRatingsOFF;
-    ratingsDEF[team] = teamRatingsDEF;
-    ratingsPassOFF[team] = teamRatingsPassOFF;
-    ratingsRushOFF[team] = teamRatingsRushOFF;
-    ratingsPassDEF[team] = teamRatingsPassDEF;
-    ratingsRushDEF[team] = teamRatingsRushDEF;
+function loadRatings(ratings) {
+  const sheet = SpreadsheetApp.getActive().getSheetByName("Ratings");
+  for (let r = 2; r <= 33; r++) {
+    const team    = sheet.getRange(r, 1).getValue();
+    const rating = sheet.getRange(r, 2).getValue();
+    ratings[team] = rating;
   }
 }
 
 /* Loads all remaining games into each team's schedule */
 function loadSchedule(schedule, numWeeksDone) {
-  if (numWeeksDone > 16) {
+  if (numWeeksDone > 17) {
     return;
   }
   const sheetAFC = SpreadsheetApp.getActive().getSheetByName("AFC");
   for (let c = 2; c <= 17; c++) {
     const team = sheetAFC.getRange(2, c).getValue();
-    for (let r = 4 + numWeeksDone; r <= 20; r++) {
+    for (let r = 4 + numWeeksDone; r <= 21; r++) {
       schedule[team][r - 4 - numWeeksDone] = sheetAFC.getRange(r, c).getValue();
     }
   }
   const sheetNFC = SpreadsheetApp.getActive().getSheetByName("NFC");
   for (let c = 2; c <= 17; c++) {
     const team = sheetNFC.getRange(2, c).getValue();
-    for (let r = 4 + numWeeksDone; r <= 20; r++) {
+    for (let r = 4 + numWeeksDone; r <= 21; r++) {
       schedule[team][r - 4 - numWeeksDone] = sheetNFC.getRange(r, c).getValue();
     }
   }
 }
 
 /* Simulates every remaining game on every team's schedule */
-function simGames(ratingsOVR, ratingsOFF, ratingsDEF, ratingsPassOFF, ratingsRushOFF, ratingsPassDEF, ratingsRushDEF, schedule, numWeeksDone, conf) {
+function simGames(ratings, schedule, numWeeksDone, conf) {
   const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
   for (let i = 2; i <= 17; i++) {
     const team = sheet.getRange(2, i).getValue();
@@ -171,61 +130,27 @@ function simGames(ratingsOVR, ratingsOFF, ratingsDEF, ratingsPassOFF, ratingsRus
         gameType = 2; // team is neutral
       }
       if (opponent in schedule) {
-        let opponentOpponent = schedule[opponent][j].toUpperCase();
-        if (gameType === 0) {
-          opponentOpponent = opponentOpponent.substring(2, opponentOpponent.length);
-        }
-        else if (gameType === 2) {
-          opponentOpponent = opponentOpponent.substring(4, opponentOpponent.length);
-        }
-        if (team === opponentOpponent) {
-          const weekNum = j + 1 + numWeeksDone;
-          let advantage = simGame(ratingsOVR, ratingsOFF, ratingsDEF, ratingsPassOFF, ratingsRushOFF, ratingsPassDEF, ratingsRushDEF, gameType, team, opponent, weekNum);
+          let advantage = simGame(ratings, gameType, team, opponent);
           if (advantage < 0) {
             sheet.getRange(j + 4 + numWeeksDone, i).setBackground("red");
-            continue;
           }
-        }
+          else {
+            sheet.getRange(j + 4 + numWeeksDone, i).setBackground("limegreen");
+          }
       }
-      sheet.getRange(j + 4 + numWeeksDone, i).setBackground("limegreen");
     }
   }
 }
 
 /* Simulates a certain given by the parameters */
-function simGame(ratingsOVR, ratingsOFF, ratingsDEF, ratingsPassOFF, ratingsRushOFF, ratingsPassDEF, ratingsRushDEF, gameType, team, opponent, weekNum) {
-  
-  let advantage = ratingsOVR[team][weekNum] - ratingsOVR[opponent][weekNum];
-  
-  // Factor homefield advantage/disadvantage
+function simGame(ratings, gameType, team, opponent) {
+  let advantage = ratings[team] - ratings[opponent];
   if (gameType === 0) {
-    advantage += 5;
+    advantage += 5.5;
   }
   if (gameType === 1) {
-    advantage -= 5;
+    advantage -= 5.5;
   }
-  
-  const teamOFFDiff = ratingsPassOFF[team][weekNum] - ratingsRushOFF[team][weekNum];
-  const teamDEFDiff = ratingsPassDEF[team][weekNum] - ratingsRushDEF[team][weekNum];
-  const opponentOFFDiff = ratingsPassOFF[opponent][weekNum] - ratingsRushOFF[opponent][weekNum];
-  const opponentDEFDiff = ratingsPassDEF[opponent][weekNum] - ratingsRushDEF[opponent][weekNum];
-  
-  // Factor offensive advantage/disadvantage
-  if (teamOFFDiff > 0) {
-    advantage += teamOFFDiff - opponentDEFDiff;
-  }
-  if (teamOFFDiff < 0) {
-    advantage -= teamOFFDiff - opponentDEFDiff;
-  }
-  
-  // Factor defensive advantage/disadvantage
-  if (opponentOFFDiff > 0) {
-    advantage += teamDEFDiff - opponentOFFDiff;
-  }
-  if (opponentOFFDiff < 0) {
-    advantage -= teamDEFDiff - opponentOFFDiff;
-  }
-  
   return advantage;
 }
 
@@ -240,7 +165,7 @@ function calculateRecords(conf, standings, standingsEast, standingsNorth, standi
     let numLossesDIV = 0;
     let numWinsCONF = 0;
     let numLossesCONF = 0;
-    for (let r = 4; r <= 20; r++) {
+    for (let r = 4; r <= 21; r++) {
       let opponent = sheet.getRange(r, c).getValue();
       if (opponent.charAt(0) === '@') {
         opponent = opponent.substring(2, opponent.length);
@@ -324,7 +249,7 @@ function calculateStrengthMetrics(conf, standings, standingsEast, standingsNorth
     let sovLosses = 0;
     let sosWins = 0;
     let sosLosses = 0;
-    for (let r = 4; r <= 20; r++) {
+    for (let r = 4; r <= 21; r++) {
       let opponent = sheetSchedule.getRange(r, c).getValue();
       if (opponent.charAt(0) === '@') {
         opponent = opponent.substring(2, opponent.length);
@@ -344,13 +269,13 @@ function calculateStrengthMetrics(conf, standings, standingsEast, standingsNorth
       sosLosses += standings[opponent]["OVRlosses"];
     }
     let numWins = standings[team]["OVRwins"];
-    let sovTies = numWins * 16 - sovWins - sovLosses;
-    let sosTies = 256 - sosWins - sosLosses;
-    let sov = (sovWins + sovTies * 0.5) / (numWins * 16);
+    let sovTies = numWins * 17 - sovWins - sovLosses;
+    let sosTies = 289 - sosWins - sosLosses;
+    let sov = (sovWins + sovTies * 0.5) / (numWins * 17);
     if (numWins == 0) {
       sov = 0.0;
     }
-    let sos = (sosWins + sosTies * 0.5) / 256;
+    let sos = (sosWins + sosTies * 0.5) / 289;
     standings[team]["sov"] = sov;
     standings[team]["sos"] = sos;
     if (team in standingsEast) {
