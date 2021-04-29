@@ -1,20 +1,3 @@
-// UPDATE EACH YEAR: Number of available prospects and draft picks
-const numQB = 47;
-const numRB = 95;
-const numWR = 163;
-const numTE = 62;
-const numOT = 78;
-const numOG = 98;
-const numOC = 29;
-const numEDGE = 143;
-const numDI = 85;
-const numLB = 93;
-const numCB = 128;
-const numS = 118;
-const numK = 7;
-const numP = 8;
-const numPicks = [0, 32, 32, 41, 39, 40, 44, 31];
-
 // UPDATE EACH YEAR: Team needs (from highest priority to lowest priority)
 let needs = {};
 needs.BUF = [[`EDGE`], [`TE`, `IOL`, `EDGE`, `DI`, `LB`], [`CB`], [`IOL`, `EDGE`], [`DI`, `LB`]];
@@ -49,6 +32,23 @@ needs.ARI = [[`WR`, `TE`, `CB`], [`IOL`], [`DI`, `LB`], [`EDGE`], [`IOL`]];
 needs.LAR = [[`EDGE`, `S`], [`IOL`, `LB`], [`TE`], [`EDGE`, `S`], [`OT`]];
 needs.SEA = [[`EDGE`], [`WR`, `IOL`], [`OT`, `CB`], [`EDGE`], [`WR`, `IOL`]];
 needs.SF = [[`QB`], [`IOL`, `EDGE`, `CB`], [`LB`, `CB`, `S`], [`EDGE`], [`RB`, `WR`, `OT`]];
+
+// UPDATE EACH YEAR: Number of available prospects and draft picks
+const numQB = 47;
+const numRB = 95;
+const numWR = 163;
+const numTE = 62;
+const numOT = 78;
+const numOG = 98;
+const numOC = 29;
+const numEDGE = 143;
+const numDI = 85;
+const numLB = 93;
+const numCB = 128;
+const numS = 118;
+const numK = 7;
+const numP = 8;
+const numPicks = [0, 32, 32, 41, 39, 40, 44, 31];
 
 // Available prospects per position
 const allQB = SpreadsheetApp.getActive().getSheetByName(`QB`).getRange(2, 1, numQB, 4).getValues();
@@ -117,26 +117,56 @@ picks.LAR = [];
 picks.SEA = [];
 picks.SF = [];
 
-/* MAIN FUNCTION: Clears the sheet */
+// Whether or not the upcoming pick has been simulated yet
+let madeUpcomingPick = false;
+
+/* MAIN FUNCTION: Runs both clear & pick functions */
+function main() {
+  clear()
+  pick()
+}
+
+/* KEY FUNCTION: Clears the sheet */
 function clear() {
+  
+  // Clear the pick/team specific information on the main sheet
+  clearMain();
+  
+  // Clear each round
   for (let i = 1; i <= 7; i++) {
     clearRound(i);
   }
   
   // After clearing all rounds, clear the picks by team sheet
-  SpreadsheetApp.getActive().getSheetByName(`PICKS BY TEAM`).getRange(3, 1, 30, 128).clearContent();
+  SpreadsheetApp.getActive().getSheetByName(`BY TEAM`).getRange(3, 1, 30, 128).clearContent();
+}
+
+/* Clears the pick/team specific information on the main sheet */
+function clearMain() {
+  let sheet = SpreadsheetApp.getActive().getSheetByName(`ALL`);
+  sheet.getRange(1, 1, 2, 1).clearContent();
+  sheet.getRange(6, 4, 1, 4).clearContent();
+  sheet.getRange(9, 1, 1, 1).clearContent();
+  sheet.getRange(11, 1, 1, 1).clearContent();
+  sheet.getRange(13, 1, 1, 1).clearContent();
+  sheet.getRange(15, 1, 1, 1).clearContent();
+  sheet.getRange(17, 1, 1, 1).clearContent();
+  sheet.getRange(3, 9, 15, 4).clearContent();
+  sheet.getRange(18, 1, 300, 1).clearContent();
 }
 
 /* Clears the sheet of the given round (roundNum) */
 function clearRound(roundNum) {
   let sheet = SpreadsheetApp.getActive().getSheetByName(`R${roundNum}`);
-  //sheet.getRange(4, 1, 1, 4 * numPicks[roundNum]).clearContent(); // only use to reset the entire draft
-  sheet.getRange(6, 1, 1, 4 * numPicks[roundNum]).clearContent();
+  // sheet.getRange(4, 1, 1, 4 * numPicks[roundNum]).clearContent(); // only use to reset the entire draft
+  // sheet.getRange(6, 1, 1, 4 * numPicks[roundNum]).clearContent(); // only use to reset the entire draft
   sheet.getRange(8, 1, 15, 4 * numPicks[roundNum]).clearContent();
 }
 
-/* MAIN FUNCTION: Simulates all remaining picks in the draft */
+/* KEY FUNCTION: Simulates all remaining picks in the draft */
 function pick() {
+  
+  // Pick each round
   for (let i = 1; i <= 7; i++) {
     pickRound(i);
   }
@@ -199,83 +229,83 @@ function makePick(roundNum, pickNum, sheet, teams, actualPicks) {
   */
 function simPick(roundNum, pickNum, sheet, team) {
   
-  // Call the helper function to find the best available player for this pick
+  // Call the helper function to find the best available position for this pick
   let bestAvailable = getBestAvailable(pickNum, sheet, team);
   
   // Set the projected pick to the best available player for this pick
   picks[team].push([`Round ${roundNum} - Pick ${pickNum}`, ``, ``, ``]);
+  let pick = [];
   switch (bestAvailable) {
     case `QB`:
-      picks[team].push(allQB[nextQB]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allQB[nextQB]]);
+      pick = allQB[nextQB];
       nextQB++;
-      return `QB`;
+      break;
     case `RB`:
-      picks[team].push(allRB[nextRB]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allRB[nextRB]]);
+      pick = allRB[nextRB];
       nextRB++;
-      return `RB`;
+      break;
     case `WR`:
-      picks[team].push(allWR[nextWR]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allWR[nextWR]]);
+      pick = allWR[nextWR];
       nextWR++;
-      return `WR`;
+      break;
     case `TE`:
-      picks[team].push(allTE[nextTE]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allTE[nextTE]]);
+      pick = allTE[nextTE];
       nextTE++;
-      return `TE`;
+      break;
     case `OT`:
-      picks[team].push(allOT[nextOT]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allOT[nextOT]]);
+      pick = allOT[nextOT];
       nextOT++;
-      return `OT`;
+      break;
     case `OG`:
-      picks[team].push(allOG[nextOG]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allOG[nextOG]]);
+      pick = allOG[nextOG];
       nextOG++;
-      return `OG`;
+      break;
     case `OC`:
-      picks[team].push(allOC[nextOC]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allOC[nextOC]]);
+      pick = allOC[nextOC];
       nextOC++;
-      return `OC`;
+      break;
     case `EDGE`:
-      picks[team].push(allEDGE[nextEDGE]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allEDGE[nextEDGE]]);
+      pick = allEDGE[nextEDGE];
       nextEDGE++;
-      return `EDGE`;
+      break;
     case `DI`:
-      picks[team].push(allDI[nextDI]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allDI[nextDI]]);
+      pick = allDI[nextDI];
       nextDI++;
-      return `DI`;
+      break;
     case `LB`:
-      picks[team].push(allLB[nextLB]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allLB[nextLB]]);
+      pick = allLB[nextLB];
       nextLB++;
-      return `LB`;
+      break;
     case `CB`:
-      picks[team].push(allCB[nextCB]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allCB[nextCB]]);
+      pick = allCB[nextCB];
       nextCB++;
-      return `CB`;
+      break;
     case `S`:
-      picks[team].push(allS[nextS]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allS[nextS]]);
+      pick = allS[nextS];
       nextS++;
-      return `S`;
+      break;
     case `K`:
-      picks[team].push(allK[nextK]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allK[nextK]]);
+      pick = allK[nextK];
       nextK++;
-      return `K`;
+      break;
     case `P`:
-      picks[team].push(allP[nextP]);
-      sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([allP[nextP]]);
+      pick = allP[nextP];
       nextP++;
-      return `P`;
+      break;
   }
+  
+  // Append the pick to the team's list of picks and show the projected pick on the sheet
+  picks[team].push(pick);
+  sheet.getRange(6, pickNum * 4 - 3, 1, 4).setValues([pick]);
+  
+  // If this is the upcoming pick, show the simulated pick on the main sheet and stop further updates to the main sheet
+  if (!madeUpcomingPick) {
+    simMainPick(roundNum, pickNum, team, [pick]);
+    madeUpcomingPick = true;
+  }
+  
+  // Return the best available position picked
+  return bestAvailable
 }
 
 /** Finds the best available players for this pick (pickNum)
@@ -383,8 +413,15 @@ function getBestAvailable(pickNum, sheet, team) {
     bigBoard.splice(15, bigBoard.length - 15);
   }
   
-  // Updates the big board and returns the #1 player's position from it
+  // Updates the team big board
   sheet.getRange(8, pickNum * 4 - 3, bigBoard.length, 4).setValues(bigBoard);
+  
+  // If this is the upcoming pick, show the team big board on the main sheet
+  if (!madeUpcomingPick) {
+    simMainBigBoard(bigBoard)
+  }
+  
+  // Return the best available position
   return bigBoard[0][0];
 }
 
@@ -422,11 +459,48 @@ function getTeamNeeds(team) {
 
 /* Updates the picks by team sheet with each team's picks */
 function updatePicksByTeam() {
-  const sheet = SpreadsheetApp.getActive().getSheetByName(`PICKS BY TEAM`);
+  const sheet = SpreadsheetApp.getActive().getSheetByName(`BY TEAM`);
   const teams = sheet.getRange(2, 1, 1, 128).getValues();
   for (let i = 0; i < 128; i += 4) {
     const team = teams[0][i];
     const teamPicks = picks[team];
     sheet.getRange(3, i + 1, teamPicks.length, 4).setValues(teamPicks);
   }
+}
+
+/* Updates the left side of the main sheet */
+function simMainPick(roundNum, pickNum, team, pick) {
+  let sheet = SpreadsheetApp.getActive().getSheetByName(`ALL`);
+  sheet.getRange(1, 1).setValue(`ROUND ${roundNum}  -  PICK ${pickNum}`);
+  sheet.getRange(2, 1).setValue(team);
+  sheet.getRange(6, 4, 1, 4).setValues(pick);
+  sheet.getRange(6, 1, 1, 1).setValue(`--->`);
+  sheet.getRange(9, 1, 1, 1).setValue(needsToStr(needs[team][0]));
+  sheet.getRange(11, 1, 1, 1).setValue(needsToStr(needs[team][1]));
+  sheet.getRange(13, 1, 1, 1).setValue(needsToStr(needs[team][2]));
+  sheet.getRange(15, 1, 1, 1).setValue(needsToStr(needs[team][3]));
+  sheet.getRange(17, 1, 1, 1).setValue(needsToStr(needs[team][4]));
+  let currentPickRow = 19 + pickNum;
+  for (let i = 1; i < roundNum; i++) {
+    currentPickRow += numPicks[i] + 2;
+  }
+  sheet.getRange(currentPickRow, 1).setValue(`--->`);
+}
+
+/* Updates the right side of the main sheet */
+function simMainBigBoard(bigBoard) {
+  let sheet = SpreadsheetApp.getActive().getSheetByName(`ALL`);
+  sheet.getRange(3, 9, bigBoard.length, 4).setValues(bigBoard);
+}
+
+/* Converts needs array to the string to show on the main sheet */
+function needsToStr(needs) {
+  let str = ``;
+  for (let i = 0; i < needs.length; i++) {
+    str += needs[i];
+    if (i < needs.length - 1) {
+      str += `  `;
+    }
+  }
+  return str;
 }
