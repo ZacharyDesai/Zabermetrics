@@ -15,40 +15,40 @@ const numK = 7;
 const numP = 8;
 const numPicks = [0, 32, 32, 41, 39, 40, 44, 31];
 
-// UPDATE EACH YEAR: Team needs (highest priority, high priority, low priority, lowest priority)
+// UPDATE EACH YEAR: Team needs (from highest priority to lowest priority)
 let needs = {};
-needs.BUF = [[], [`CB`, `EDGE`, `WR`], [`RB`, `DI`, `TE`, `CB`], [`OT`, `IOL`, `S`, `LB`, `QB`]];
-needs.MIA = [[`WR`], [`EDGE`, `IOL`], [`RB`, `TE`, `WR`, `DI`, `S`, `LB`, `P`], [`LB`, `OT`, `QB`]];
-needs.NE = [[`QB`], [`LB`, `WR`], [`CB`, `S`, `WR`, `RB`, `DI`], [`CB`, `EDGE`, `IOL`, `OT`]];
-needs.NYJ = [[`QB`], [`RB`, `EDGE`, `CB`], [`WR`, `TE`, `LB`, `IOL`, `OT`, `K`], [`WR`, `EDGE`, `S`, `CB`]];
-needs.BAL = [[`WR`], [`EDGE`, `S`], [`OT`, `EDGE`, `TE`, `IOL`, `WR`], [`LB`, `CB`, `DI`]];
-needs.CIN = [[`WR`, `OT`], [`TE`, `IOL`, `EDGE`, `LB`, `CB`], [`IOL`, `CB`], [`S`, `LB`, `QB`]];
-needs.CLE = [[], [`EDGE`, `DI`, `WR`, `CB`], [`LB`, `IOL`], [`OT`, `S`, `LB`, `DI`, `CB`, `TE`, `QB`, `K`]];
-needs.PIT = [[], [`CB`, `OT`, `RB`, `IOL`], [`LB`, `EDGE`, `DI`, `QB`], [`TE`, `WR`, `DI`]];
-needs.HOU = [[], [`CB`, `DI`, `WR`, `IOL`, `TE`, `EDGE`], [`LB`, `S`, `K`], [`WR`, `OT`]];
-needs.IND = [[`OT`], [`CB`, `WR`, `EDGE`], [`DI`, `LB`, `TE`], [`QB`, `S`]];
-needs.JAX = [[`QB`], [`S`], [`OT`, `WR`, `RB`, `CB`, `TE`, `DI`, `EDGE`], [`WR`, `IOL`]];
-needs.TEN = [[`CB`, `WR`, `OT`, `S`, `TE`, `EDGE`], [`LB`, `DI`, `WR`], [`DI`], [`IOL`, `QB`]];
-needs.DEN = [[`QB`], [`LB`, `CB`], [`OT`, `IOL`, `DI`, `WR`, `EDGE`, `RB`], [`LB`, `S`, `CB`, `OT`]];
-needs.KC = [[`OT`], [`WR`, `LB`, `IOL`, `EDGE`], [`IOL`, `DI`, `TE`], [`CB`]];
-needs.LAC = [[`OT`], [`EDGE`, `S`, `CB`, `IOL`], [`WR`, `LB`, `TE`, `IOL`, `OT`, `K`], [`CB`, `RB`, `DI`]];
-needs.LV = [[`OT`], [`LB`, `IOL`, `S`, `DI`], [`CB`, `EDGE`, `TE`], [`RB`, `CB`, `WR`, `QB`]];
-needs.DAL = [[`CB`, `DI`, `OT`, `EDGE`], [`TE`, `IOL`, `S`], [`CB`, `P`], [`LB`]];
-needs.NYG = [[], [`EDGE`, `LB`, `CB`, `WR`, `OT`], [`IOL`, `EDGE`, `LB`, `TE`], [`QB`, `S`, `IOL`, `RB`]];
-needs.PHI = [[`WR`, `CB`, `S`], [`TE`, `LB`, `IOL`, `OT`], [`CB`, `LB`, `P`], [`DI`, `QB`, `EDGE`, `RB`]];
-needs.WAS = [[`OT`, `LB`], [`S`, `CB`], [`WR`, `QB`, `IOL`, `CB`, `TE`], [`WR`, `RB`, `DI`]];
-needs.CHI = [[`OT`, `CB`], [`QB`, `WR`, `IOL`], [`WR`, `DI`, `EDGE`], [`TE`, `LB`, `RB`]];
-needs.DET = [[`WR`], [`CB`, `OT`, `LB`, `DI`], [`QB`, `DI`, `LB`], [`WR`, `S`, `EDGE`, `K`]];
-needs.GB = [[], [`OT`, `WR`, `CB`, `LB`], [`DI`, `IOL`, `WR`], [`S`, `TE`, `IOL`, `LB`, `RB`]];
-needs.MIN = [[`IOL`], [`S`, `CB`, `EDGE`, `OT`], [`WR`, `IOL`, `DI`, `QB`, `K`, `P`], [`LB`, `TE`]];
-needs.ATL = [[`TE`], [`QB`, `EDGE`, `OT`], [`LB`, `RB`, `S`, `CB`, `WR`], [`DI`, `S`]];
-needs.CAR = [[`OT`], [`CB`], [`TE`, `QB`, `LB`, `IOL`, `S`, `DI`, `CB`], [`IOL`, `RB`, `EDGE`]];
-needs.NO = [[], [`CB`, `WR`, `LB`, `DI`, `TE`], [`EDGE`, `S`], [`QB`, `OT`, `LB`]];
-needs.TB = [[], [`DI`, `RB`, `EDGE`, `WR`], [`IOL`, `OT`, `QB`], [`DI`, `LB`, `OT`, `S`]];
-needs.ARI = [[`CB`], [`RB`, `IOL`], [`TE`, `LB`, `CB`, `DI`, `IOL`, `WR`], [`WR`, `EDGE`]];
-needs.LAR = [[], [`OT`, `IOL`, `TE`, `LB`, `EDGE`], [`CB`, `WR`, `OT`], [`IOL`, `LB`]];
-needs.SEA = [[], [`EDGE`, `OT`, `CB`], [`IOL`, `DI`, `WR`], [`WR`, `S`, `TE`]];
-needs.SF = [[`QB`], [`CB`], [`IOL`, `OT`, `S`, `CB`, `EDGE`], [`WR`, `RB`, `LB`]];
+needs.BUF = [[`EDGE`], [`TE`, `IOL`, `EDGE`, `DI`, `LB`], [`CB`], [`IOL`, `EDGE`], [`DI`, `LB`]];
+needs.MIA = [[`WR`], [`EDGE`], [`IOL`], [`QB`, `RB`, `TE`, `OT`, `LB`], [`IOL`, `EDGE`, `OT`, `LB`]];
+needs.NE = [[`QB`], [`WR`, `EDGE`], [`OT`, `DI`, `LB`, `CB`, `S`], [`WR`, `EDGE`], [`DI`, `LB`]];
+needs.NYJ = [[`QB`], [`EDGE`, `CB`], [`RB`, `TE`, `CB`], [`OT`, `IOL`, `LB`], [`RB`, `EDGE`]];
+needs.BAL = [[`WR`], [`OT`], [`IOL`, `EDGE`], [`LB`, `S`], [`WR`, `IOL`, `EDGE`, `LB`, `S`]];
+needs.CIN = [[`WR`], [`TE`, `IOL`, `EDGE`, `LB`], [`RB`, `OT`, `EDGE`], [`IOL`, `LB`], [`OT`, `EDGE`]];
+needs.CLE = [[`EDGE`, `LB`, `CB`], [`WR`, `OT`, `DI`], [`EDGE`, `LB`], [`K`], [`OT`, `DI`]];
+needs.PIT = [[`QB`, `RB`, `OT`, `IOL`, `CB`], [`EDGE`, `LB`], [`OT`, `IOL`, `CB`], [`EDGE`, `LB`], [`QB`]];
+needs.HOU = [[`EDGE`, `DI`], [`QB`, `WR`, `TE`, `IOL`, `CB`], [`EDGE`, `DI`], [`WR`, `TE`, `IOL`], [`CB`, `S`]];
+needs.IND = [[`OT`], [`WR`, `EDGE`], [`EDGE`, `CB`], [`S`], [`WR`, `EDGE`]];
+needs.JAX = [[`QB`, `S`], [`OT`], [`WR`, `TE`, `EDGE`, `DI`, `LB`], [`OT`, `S`], [`RB`, `DI`, `LB`]];
+needs.TEN = [[`WR`], [`EDGE`, `CB`], [`TE`, `OT`, `DI`, `S`], [`WR`, `EDGE`, `CB`], [`RB`, `OT`, `DI`, `S`]];
+needs.DEN = [[`QB`], [`IOL`, `LB`], [`OT`, `EDGE`, `DI`, `CB`], [`IOL`, `LB`], [`EDGE`, `DI`]];
+needs.KC = [[`EDGE`, `LB`], [`WR`, `CB`], [`EDGE`, `LB`], [`OT`, `IOL`], [`WR`, `CB`]];
+needs.LAC = [[`OT`], [`WR`, `TE`, `EDGE`, `CB`, `S`], [`OT`, `CB`], [`K`], [`WR`, `IOL`]];
+needs.LV = [[`OT`], [`IOL`, `DI`, `CB`, `S`], [`LB`], [`CB`, `S`], [`IOL`, `DI`]];
+needs.DAL = [[`CB`], [`OT`, `IOL`, `EDGE`, `DI`, `LB`], [`TE`, `CB`, `S`], [`P`], [`OT`, `IOL`]];
+needs.NYG = [[`LB`, `EDGE`], [`OT`, `IOL`], [`CB`], [`IOL`], [`OT`, `IOL`, `EDGE`, `LB`, `CB`]];
+needs.PHI = [[`CB`], [`QB`, `WR`, `OT`, `IOL`, `EDGE`, `LB`], [`WR`, `LB`, `CB`], [`P`], [`IOL`, `EDGE`]];
+needs.WAS = [[`QB`, `WR`, `TE`, `OT`, `LB`], [`CB`, `S`], [`EDGE`], [`QB`, `WR`, `LB`], [`TE`, `OT`]];
+needs.CHI = [[`QB`, `WR`, `OT`, `CB`], [`EDGE`, `LB`], [`WR`, `CB`], [`QB`, `OT`], [`EDGE`, `LB`]];
+needs.DET = [[`WR`], [`IOL`, `CB`, `S`], [`OT`], [`EDGE`, `CB`, `S`], [`QB`]];
+needs.GB = [[`WR`], [`OT`, `IOL`, `LB`, `CB`], [`DI`], [`WR`, `IOL`, `LB`, `CB`], [`EDGE`, `DI`]];
+needs.MIN = [[`IOL`], [`WR`, `TE`, `OT`, `IOL`, `EDGE`, `CB`, `S`], [`OT`, `EDGE`], [`K`], [`QB`,  `CB`]];
+needs.ATL = [[`TE`], [`IOL`, `EDGE`], [`RB`, `OT`, `LB`, `CB`, `S`], [`EDGE`], [`QB`, `IOL`]];
+needs.CAR = [[`OT`], [`TE`, `IOL`, `CB`], [`EDGE`, `S`], [`IOL`, `CB`], [`S`]];
+needs.NO = [[`WR`], [`CB`], [`TE`, `IOL`, `EDGE`, `S`], [`WR`, `CB`], [`DI`, `LB`]];
+needs.TB = [[`EDGE`], [`QB`, `WR`, `OT`, `IOL`, `DI`, `LB`], [`EDGE`], [`OT`, `IOL`, `DI`, `LB`], [`WR`, `TE`]];
+needs.ARI = [[`WR`, `TE`, `CB`], [`IOL`], [`DI`, `LB`], [`EDGE`], [`IOL`]];
+needs.LAR = [[`EDGE`, `S`], [`IOL`, `LB`], [`TE`], [`EDGE`, `S`], [`OT`]];
+needs.SEA = [[`EDGE`], [`WR`, `IOL`], [`OT`, `CB`], [`EDGE`], [`WR`, `IOL`]];
+needs.SF = [[`QB`], [`IOL`, `EDGE`, `CB`], [`LB`, `CB`, `S`], [`EDGE`], [`RB`, `WR`, `OT`]];
 
 // Available prospects per position
 const allQB = SpreadsheetApp.getActive().getSheetByName(`QB`).getRange(2, 1, numQB, 4).getValues();
@@ -130,7 +130,7 @@ function clear() {
 /* Clears the sheet of the given round (roundNum) */
 function clearRound(roundNum) {
   let sheet = SpreadsheetApp.getActive().getSheetByName(`R${roundNum}`);
-  sheet.getRange(4, 1, 1, 4 * numPicks[roundNum]).clearContent();
+  //sheet.getRange(4, 1, 1, 4 * numPicks[roundNum]).clearContent(); // only use to reset the entire draft
   sheet.getRange(6, 1, 1, 4 * numPicks[roundNum]).clearContent();
   sheet.getRange(8, 1, 15, 4 * numPicks[roundNum]).clearContent();
 }
@@ -166,7 +166,7 @@ function makePick(roundNum, pickNum, sheet, teams, actualPicks) {
   let pickedPOS = actualPicks[0][(pickNum - 1) * 4];
   
   // If an actual pick hasn't been made yet, simulate this pick
-  if (pickedPOS == "") {
+  if (pickedPOS == ``) {
     pickedPOS = simPick(roundNum, pickNum, sheet, team);
   }
   
@@ -187,6 +187,9 @@ function makePick(roundNum, pickNum, sheet, teams, actualPicks) {
   }
   else if (needs[team][3].indexOf(pickedPOS) != -1) {
     needs[team][3].splice(needs[team][3].indexOf(pickedPOS), 1);
+  }
+  else if (needs[team][4].indexOf(pickedPOS) != -1) {
+    needs[team][4].splice(needs[team][4].indexOf(pickedPOS), 1);
   }
 }
 
@@ -398,14 +401,19 @@ function getTeamNeeds(team) {
     return needs[team][1];
   }
   
-  // If the team has low priority needs remaining, return them
+  // If the team has medium priority needs remaining, return them
   if (needs[team][2].length > 0) {
     return needs[team][2];
   }
   
-  // If the team has lowest priority needs remaining, return them
+  // If the team has low priority needs remaining, return them
   if (needs[team][3].length > 0) {
     return needs[team][3];
+  }
+  
+  // If the team has lowest priority needs remaining, return them
+  if (needs[team][4].length > 0) {
+    return needs[team][4];
   }
   
   // If the team has no needs remaining, return all positions and select best available
