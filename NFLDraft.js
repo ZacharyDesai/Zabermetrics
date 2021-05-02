@@ -11,22 +11,22 @@ needs.PIT = [[`QB`, `RB`, `OT`, `IOL`, `CB`], [`EDGE`, `LB`], [`OT`, `IOL`, `CB`
 needs.HOU = [[`EDGE`, `DI`], [`QB`, `WR`, `TE`, `IOL`, `CB`], [`EDGE`, `DI`], [`WR`, `TE`, `IOL`], [`CB`, `S`]];
 needs.IND = [[`OT`], [`WR`, `EDGE`], [`EDGE`, `CB`], [`S`], [`WR`, `EDGE`]];
 needs.JAX = [[`QB`, `S`], [`OT`], [`WR`, `TE`, `EDGE`, `DI`, `LB`], [`OT`, `S`], [`RB`, `DI`, `LB`]];
-needs.TEN = [[`WR`], [`EDGE`, `CB`], [`TE`, `OT`, `DI`, `S`], [`WR`, `EDGE`, `CB`], [`RB`, `OT`, `DI`, `S`]];
-needs.DEN = [[`QB`], [`IOL`, `LB`], [`OT`, `EDGE`, `DI`, `CB`], [`IOL`, `LB`], [`EDGE`, `DI`]];
+needs.TEN = [[`WR`, `EDGE`], [`CB`], [`TE`, `OT`, `DI`, `S`], [`WR`, `EDGE`, `CB`], [`RB`, `OT`, `DI`, `S`]];
+needs.DEN = [[`QB`, `IOL`, `LB`], [`OT`, `EDGE`, `DI`, `CB`], [`IOL`, `LB`], [`EDGE`, `DI`], []];
 needs.KC = [[`EDGE`, `LB`], [`WR`, `CB`], [`EDGE`, `LB`], [`OT`, `IOL`], [`WR`, `CB`]];
 needs.LAC = [[`OT`], [`WR`, `TE`, `EDGE`, `CB`, `S`], [`OT`, `CB`], [`K`], [`WR`, `IOL`]];
 needs.LV = [[`OT`], [`IOL`, `DI`, `CB`, `S`], [`LB`], [`CB`, `S`], [`IOL`, `DI`]];
-needs.DAL = [[`CB`], [`OT`, `IOL`, `EDGE`, `DI`, `LB`], [`TE`, `CB`, `S`], [`P`], [`OT`, `IOL`]];
+needs.DAL = [[`CB`], [`OT`, `IOL`, `EDGE`, `DI`, `LB`], [`TE`, `S`], [`CB`, `S`], [`P`]];
 needs.NYG = [[`LB`, `EDGE`], [`OT`, `IOL`], [`CB`], [`IOL`], [`OT`, `IOL`, `EDGE`, `LB`, `CB`]];
-needs.PHI = [[`CB`], [`QB`, `WR`, `OT`, `IOL`, `EDGE`, `LB`], [`WR`, `LB`, `CB`], [`P`], [`IOL`, `EDGE`]];
+needs.PHI = [[`WR`, `CB`], [`QB`, `WR`, `OT`, `IOL`, `EDGE`, `LB`], [`WR`, `LB`, `CB`], [`P`], [`IOL`, `EDGE`]];
 needs.WAS = [[`QB`, `WR`, `TE`, `OT`, `LB`], [`CB`, `S`], [`EDGE`], [`QB`, `WR`, `LB`], [`TE`, `OT`]];
 needs.CHI = [[`QB`, `WR`, `OT`, `CB`], [`EDGE`, `LB`], [`WR`, `CB`], [`QB`, `OT`], [`EDGE`, `LB`]];
 needs.DET = [[`WR`], [`IOL`, `CB`, `S`], [`OT`], [`EDGE`, `CB`, `S`], [`QB`]];
 needs.GB = [[`WR`], [`OT`, `IOL`, `LB`, `CB`], [`DI`], [`WR`, `IOL`, `LB`, `CB`], [`EDGE`, `DI`]];
 needs.MIN = [[`IOL`], [`WR`, `TE`, `OT`, `IOL`, `EDGE`, `CB`, `S`], [`OT`, `EDGE`], [`K`], [`QB`,  `CB`]];
 needs.ATL = [[`TE`], [`IOL`, `EDGE`], [`RB`, `OT`, `LB`, `CB`, `S`], [`EDGE`], [`QB`, `IOL`]];
-needs.CAR = [[`OT`], [`TE`, `IOL`, `CB`], [`EDGE`, `S`], [`IOL`, `CB`], [`S`]];
-needs.NO = [[`WR`], [`CB`], [`TE`, `IOL`, `EDGE`, `S`], [`WR`, `CB`], [`DI`, `LB`]];
+needs.CAR = [[`TE`, `OT`, `IOL`, `CB`], [`EDGE`, `S`], [`IOL`, `CB`], [`S`], []];
+needs.NO = [[`WR`, `CB`], [`TE`, `IOL`, `EDGE`, `S`], [`WR`, `CB`], [`DI`, `LB`], []];
 needs.TB = [[`EDGE`], [`QB`, `WR`, `OT`, `IOL`, `DI`, `LB`], [`EDGE`], [`OT`, `IOL`, `DI`, `LB`], [`WR`, `TE`]];
 needs.ARI = [[`WR`, `TE`, `CB`], [`IOL`], [`DI`, `LB`], [`EDGE`], [`IOL`]];
 needs.LAR = [[`EDGE`, `S`], [`IOL`, `LB`], [`TE`], [`EDGE`, `S`], [`OT`]];
@@ -193,11 +193,20 @@ function pickRound(roundNum) {
   */
 function makePick(roundNum, pickNum, sheet, teams, actualPicks) {
   const team = teams[0][(pickNum - 1) * 4];
+  picks[team].push([`Round ${roundNum} - Pick ${pickNum}`, ``, ``, ``]);
   let pickedPOS = actualPicks[0][(pickNum - 1) * 4];
   
   // If an actual pick hasn't been made yet, simulate this pick
   if (pickedPOS == ``) {
     pickedPOS = simPick(roundNum, pickNum, sheet, team);
+  }
+  
+  // If the pick has already been made, append the pick to the team's list of picks
+  else {
+    let pickedSchool = actualPicks[0][(pickNum - 1) * 4 + 1];
+    let pickedPlayer = actualPicks[0][(pickNum - 1) * 4 + 2];
+    let pickedGrade = actualPicks[0][(pickNum - 1) * 4 + 3];
+    picks[team].push([pickedPOS, pickedSchool, pickedPlayer, pickedGrade]);
   }
   
   // Groups interior offensive linemen as the same need
@@ -233,7 +242,6 @@ function simPick(roundNum, pickNum, sheet, team) {
   let bestAvailable = getBestAvailable(pickNum, sheet, team);
   
   // Set the projected pick to the best available player for this pick
-  picks[team].push([`Round ${roundNum} - Pick ${pickNum}`, ``, ``, ``]);
   let pick = [];
   switch (bestAvailable) {
     case `QB`:
