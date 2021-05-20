@@ -51,20 +51,20 @@ const numP = 8;
 const numPicks = [0, 32, 32, 41, 39, 40, 44, 31];
 
 // Available prospects per position
-const allQB = SpreadsheetApp.getActive().getSheetByName(`QB`).getRange(2, 1, numQB, 4).getValues();
-const allRB = SpreadsheetApp.getActive().getSheetByName(`RB`).getRange(2, 1, numRB, 4).getValues();
-const allWR = SpreadsheetApp.getActive().getSheetByName(`WR`).getRange(2, 1, numWR, 4).getValues();
-const allTE = SpreadsheetApp.getActive().getSheetByName(`TE`).getRange(2, 1, numTE, 4).getValues();
-const allOT = SpreadsheetApp.getActive().getSheetByName(`OT`).getRange(2, 1, numOT, 4).getValues();
-const allOG = SpreadsheetApp.getActive().getSheetByName(`OG`).getRange(2, 1, numOG, 4).getValues();
-const allOC = SpreadsheetApp.getActive().getSheetByName(`OC`).getRange(2, 1, numOC, 4).getValues();
-const allEDGE = SpreadsheetApp.getActive().getSheetByName(`EDGE`).getRange(2, 1, numEDGE, 4).getValues();
-const allDI = SpreadsheetApp.getActive().getSheetByName(`DI`).getRange(2, 1, numDI, 4).getValues();
-const allLB = SpreadsheetApp.getActive().getSheetByName(`LB`).getRange(2, 1, numLB, 4).getValues();
-const allCB = SpreadsheetApp.getActive().getSheetByName(`CB`).getRange(2, 1, numCB, 4).getValues();
-const allS = SpreadsheetApp.getActive().getSheetByName(`S`).getRange(2, 1, numS, 4).getValues();
-const allK = SpreadsheetApp.getActive().getSheetByName(`K`).getRange(2, 1, numK, 4).getValues();
-const allP = SpreadsheetApp.getActive().getSheetByName(`P`).getRange(2, 1, numP, 4).getValues();
+//const allQB = SpreadsheetApp.getActive().getSheetByName(`QB`).getRange(2, 1, numQB, 4).getValues();
+//const allRB = SpreadsheetApp.getActive().getSheetByName(`RB`).getRange(2, 1, numRB, 4).getValues();
+//const allWR = SpreadsheetApp.getActive().getSheetByName(`WR`).getRange(2, 1, numWR, 4).getValues();
+//const allTE = SpreadsheetApp.getActive().getSheetByName(`TE`).getRange(2, 1, numTE, 4).getValues();
+//const allOT = SpreadsheetApp.getActive().getSheetByName(`OT`).getRange(2, 1, numOT, 4).getValues();
+//const allOG = SpreadsheetApp.getActive().getSheetByName(`OG`).getRange(2, 1, numOG, 4).getValues();
+//const allOC = SpreadsheetApp.getActive().getSheetByName(`OC`).getRange(2, 1, numOC, 4).getValues();
+//const allEDGE = SpreadsheetApp.getActive().getSheetByName(`EDGE`).getRange(2, 1, numEDGE, 4).getValues();
+//const allDI = SpreadsheetApp.getActive().getSheetByName(`DI`).getRange(2, 1, numDI, 4).getValues();
+//const allLB = SpreadsheetApp.getActive().getSheetByName(`LB`).getRange(2, 1, numLB, 4).getValues();
+//const allCB = SpreadsheetApp.getActive().getSheetByName(`CB`).getRange(2, 1, numCB, 4).getValues();
+//const allS = SpreadsheetApp.getActive().getSheetByName(`S`).getRange(2, 1, numS, 4).getValues();
+//const allK = SpreadsheetApp.getActive().getSheetByName(`K`).getRange(2, 1, numK, 4).getValues();
+//const allP = SpreadsheetApp.getActive().getSheetByName(`P`).getRange(2, 1, numP, 4).getValues();
 
 // Indices of best available prospects per position (not chosen by simulator yet)
 let nextQB = 0;
@@ -122,8 +122,8 @@ let madeUpcomingPick = false;
 
 /* MAIN FUNCTION: Runs both clear & pick functions */
 function main() {
-  clear()
-  pick()
+  clear();
+  pick();
 }
 
 /* KEY FUNCTION: Clears the sheet */
