@@ -100,6 +100,10 @@ function clear() {
     clearedRecords[0].push("--");
   }
   
+  if (numWeeksDone > 17) {
+    return;
+  }
+  
   // Clear AFC sheet
   const sheetAFC = SpreadsheetApp.getActive().getSheetByName("AFC");
   sheetAFC.getRange(4 + numWeeksDone, 2, 18 - numWeeksDone, 16).setBackground("white");
@@ -131,7 +135,7 @@ function loadSchedule(schedule) {
   // Load from AFC sheet
   const sheetAFC = SpreadsheetApp.getActive().getSheetByName("AFC");
   const teamsAFC = sheetAFC.getRange(2, 2, 1, 16).getValues();
-  const scheduleAFC = sheetAFC.getRange(4 + numWeeksDone, 2, 18 - numWeeksDOne, 16).getValues();
+  const scheduleAFC = sheetAFC.getRange(4 + numWeeksDone, 2, 18 - numWeeksDone, 16).getValues();
   for (let c = 0; c < 16; c++) {
     const team = teamsAFC[0][c];
     schedule[team] = [];
