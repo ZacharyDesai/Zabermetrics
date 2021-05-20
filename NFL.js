@@ -118,7 +118,7 @@ function clear() {
 /* Loads all ratings for each team */
 function loadRatings(ratings) {
   const sheet = SpreadsheetApp.getActive().getSheetByName("Ratings");
-  let ratingsData = sheet.getRange(2, 1, 32, 2).getValues();
+  const ratingsData = sheet.getRange(2, 1, 32, 2).getValues();
   for (let i = 0; i < 32; i++) {
     const team = ratingsData[i][0];
     const rating = ratingsData[i][1];
