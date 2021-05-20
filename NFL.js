@@ -1,7 +1,11 @@
+// UPDATE EACH WEEK:
+const numWeeksDone = 0; // equivalent to the previous week #
+
+// UPDATE AS NEEDED:
+const homefieldAdvantage = 3.33;
+
+/* MAIN FUNCTION: Runs the simulation */
 function main() {
-  
-  // UPDATE EACH WEEK:
-  const numWeeksDone = 0; // equivalent to the previous week #
   
   let ratings = {};
   let schedule  = {"BUF":[], "MIA":[], "NE":[], "NYJ":[], "BAL":[], "CIN":[], "CLE":[], "PIT":[], "HOU":[], "IND":[], "JAX":[], "TEN":[], "DEN":[], "KC":[], "LAC":[], "LV":[],
@@ -17,11 +21,11 @@ function main() {
   let standingsNFCSouth = {"ATL":{}, "CAR":{}, "NO":{}, "TB":{}};
   let standingsNFCWest  = {"ARI":{}, "LAR":{}, "SEA":{}, "SF":{}};
 
-  clear(numWeeksDone);
+  clear();
   loadRatings(ratings);
-  loadSchedule(schedule, numWeeksDone);
-  simGames(ratings, schedule, numWeeksDone, "AFC");
-  simGames(ratings, schedule, numWeeksDone, "NFC");
+  loadSchedule(schedule);
+  simGames(ratings, schedule, "AFC");
+  simGames(ratings, schedule, "NFC");
   calculateRecords("AFC", standings, standingsAFCEast, standingsAFCNorth, standingsAFCSouth, standingsAFCWest);
   calculateRecords("NFC", standings, standingsNFCEast, standingsNFCNorth, standingsNFCSouth, standingsNFCWest);
   calculateStrengthMetrics("AFC", standings, standingsAFCEast, standingsAFCNorth, standingsAFCSouth, standingsAFCWest);
@@ -34,89 +38,130 @@ function main() {
   fillDivisionStandings("NFC North", standingsNFCNorth);
   fillDivisionStandings("NFC South", standingsNFCSouth);
   fillDivisionStandings("NFC West", standingsNFCWest);
-  addStrengthToDivisionStandings("AFC East", standings, standingsAFCEast, standingsAFCNorth, standingsAFCSouth, standingsAFCWest);
-  addStrengthToDivisionStandings("AFC North", standings, standingsAFCEast, standingsAFCNorth, standingsAFCSouth, standingsAFCWest);
-  addStrengthToDivisionStandings("AFC South", standings, standingsAFCEast, standingsAFCNorth, standingsAFCSouth, standingsAFCWest);
-  addStrengthToDivisionStandings("AFC West", standings, standingsAFCEast, standingsAFCNorth, standingsAFCSouth, standingsAFCWest);
-  addStrengthToDivisionStandings("NFC East", standings, standingsNFCEast, standingsNFCNorth, standingsNFCSouth, standingsNFCWest);
-  addStrengthToDivisionStandings("NFC North", standings, standingsNFCEast, standingsNFCNorth, standingsNFCSouth, standingsNFCWest);
-  addStrengthToDivisionStandings("NFC South", standings, standingsNFCEast, standingsNFCNorth, standingsNFCSouth, standingsNFCWest);
-  addStrengthToDivisionStandings("NFC West", standings, standingsNFCEast, standingsNFCNorth, standingsNFCSouth, standingsNFCWest);
+}
+
+/* UTILITY FUNCTION: Use to check if the schedule was inputted correctly */
+function checkSchedule() {
+  let schedule  = {"BUF":[], "MIA":[], "NE":[], "NYJ":[], "BAL":[], "CIN":[], "CLE":[], "PIT":[], "HOU":[], "IND":[], "JAX":[], "TEN":[], "DEN":[], "KC":[], "LAC":[], "LV":[],
+                  "DAL":[], "NYG":[], "PHI":[], "WAS":[], "CHI":[], "DET":[], "GB":[], "MIN":[], "ATL":[], "CAR":[], "NO":[], "TB":[], "ARI":[], "LAR":[], "SEA":[], "SF":[]};
+  clear();
+  loadSchedule(schedule);
+  checkScheduleHelper(schedule, "AFC");
+  checkScheduleHelper(schedule, "NFC");
+}
+
+// Checks each match in schedule to make sure each opponent is an actual team
+function checkScheduleHelper(schedule, conf) {
+  const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
+  const teams = sheet.getRange(2, 2, 1, 16).getValues();
+  for (let c = 0; c < 16; c++) {
+    const team = teams[0][c];
+    const teamSchedule = schedule[team];
+    for (let r = 0; r < teamSchedule.length; r++) {
+      let opponent = teamSchedule[r];
+      if (opponent === "--") {
+        sheet.getRange(r + 4, c + 2).setBackground("limegreen");
+        continue;
+      }
+      if (opponent.charAt(0) === '@') {
+        opponent = opponent.substring(2, opponent.length);
+      }
+      else if (opponent.substring(0, 3) === "vs.") {
+        opponent = opponent.substring(4, opponent.length);
+      }
+      
+      if (!(opponent in schedule)) {
+        sheet.getRange(r + 4, c + 2).setBackground("red");
+      }
+    }
+  }
 }
 
 /* Clears any previous simulated material from the spreadsheet to reset it */
-function clear(numWeeksDone) {
+function clear() {
+  
+  // Clear Standings sheet
   const sheetStandings = SpreadsheetApp.getActive().getSheetByName("Standings");
-  for (let r = 1; r <= 21; r++) {
-    if (r % 5 === 1) {
-      continue;
+  let clearedStandings = [];
+  for (let r = 0; r < 4; r++) {
+    let arr = [];
+    for (let c = 0; c < 12; c++) {
+      arr.push("");
     }
-    for (let c = 1; c <= 12; c++) {
-      sheetStandings.getRange(r, c).setValue("");
-    }
+    clearedStandings.push(arr);
   }
-  if (numWeeksDone > 17) {
-    return;
+  for (let r = 2; r < 21; r += 5) {
+    sheetStandings.getRange(r, 1, 4, 12).setValues(clearedStandings);
   }
+  
+  let clearedRecords = [];
+  clearedRecords.push([]);
+  for (let c = 0; c < 16; c++) {
+    clearedRecords[0].push("--");
+  }
+  
+  // Clear AFC sheet
   const sheetAFC = SpreadsheetApp.getActive().getSheetByName("AFC");
-  for (let r = 4 + numWeeksDone; r <= 21; r++) {
-    for (let c = 2; c <= 17; c++) {
-      sheetAFC.getRange(r, c).setBackground("white");
-    }
-  }
-  for (let c = 2; c <= 17; c++) {
-    sheetAFC.getRange(3, c).setValue("--");
-  }
+  sheetAFC.getRange(4 + numWeeksDone, 2, 18 - numWeeksDone, 16).setBackground("white");
+  sheetAFC.getRange(3, 2, 1, 16).setValues(clearedRecords);
+  
+  // Clear NFC sheet
   const sheetNFC = SpreadsheetApp.getActive().getSheetByName("NFC");
-  for (let r = 4 + numWeeksDone; r <= 21; r++) {
-    for (let c = 2; c <= 17; c++) {
-      sheetNFC.getRange(r, c).setBackground("white");
-    }
-  }
-  for (let c = 2; c <= 17; c++) {
-    sheetNFC.getRange(3, c).setValue("--");
-  }
+  sheetNFC.getRange(4 + numWeeksDone, 2, 18 - numWeeksDone, 16).setBackground("white");
+  sheetNFC.getRange(3, 2, 1, 16).setValues(clearedRecords);
 }
 
 /* Loads all ratings for each team */
 function loadRatings(ratings) {
   const sheet = SpreadsheetApp.getActive().getSheetByName("Ratings");
-  for (let r = 2; r <= 33; r++) {
-    const team    = sheet.getRange(r, 1).getValue();
-    const rating = sheet.getRange(r, 2).getValue();
+  let ratingsData = sheet.getRange(2, 1, 32, 2).getValues();
+  for (let i = 0; i < 32; i++) {
+    const team = ratingsData[i][0];
+    const rating = ratingsData[i][1];
     ratings[team] = rating;
   }
 }
 
 /* Loads all remaining games into each team's schedule */
-function loadSchedule(schedule, numWeeksDone) {
+function loadSchedule(schedule) {
   if (numWeeksDone > 17) {
     return;
   }
+  
+  // Load from AFC sheet
   const sheetAFC = SpreadsheetApp.getActive().getSheetByName("AFC");
-  for (let c = 2; c <= 17; c++) {
-    const team = sheetAFC.getRange(2, c).getValue();
-    for (let r = 4 + numWeeksDone; r <= 21; r++) {
-      schedule[team][r - 4 - numWeeksDone] = sheetAFC.getRange(r, c).getValue();
+  const teamsAFC = sheetAFC.getRange(2, 2, 1, 16).getValues();
+  const scheduleAFC = sheetAFC.getRange(4 + numWeeksDone, 2, 18 - numWeeksDOne, 16).getValues();
+  for (let c = 0; c < 16; c++) {
+    const team = teamsAFC[0][c];
+    schedule[team] = [];
+    for (let r = 0; r < scheduleAFC.length; r++) {
+      schedule[team].push(scheduleAFC[r][c]);
     }
   }
+  
+  // Load from NFC sheet
   const sheetNFC = SpreadsheetApp.getActive().getSheetByName("NFC");
-  for (let c = 2; c <= 17; c++) {
-    const team = sheetNFC.getRange(2, c).getValue();
-    for (let r = 4 + numWeeksDone; r <= 21; r++) {
-      schedule[team][r - 4 - numWeeksDone] = sheetNFC.getRange(r, c).getValue();
+  const teamsNFC = sheetNFC.getRange(2, 2, 1, 16).getValues();
+  const scheduleNFC = sheetNFC.getRange(4 + numWeeksDone, 2, 18 - numWeeksDone, 16).getValues();
+  for (let c = 0; c < 16; c++) {
+    const team = teamsNFC[0][c];
+    schedule[team] = [];
+    for (let r = 0; r < scheduleNFC.length; r++) {
+      schedule[team].push(scheduleNFC[r][c]);
     }
   }
 }
 
 /* Simulates every remaining game on every team's schedule */
-function simGames(ratings, schedule, numWeeksDone, conf) {
+function simGames(ratings, schedule, conf) {
   const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
-  for (let i = 2; i <= 17; i++) {
-    const team = sheet.getRange(2, i).getValue();
+  const teams = sheet.getRange(2, 2, 1, 16).getValues();
+  for (let c = 0; c < 16; c++) {
+    const team = teams[0][c];
     const teamSchedule = schedule[team];
-    for (let j = 0; j < teamSchedule.length; j++) {
-      let opponent = teamSchedule[j];
+    for (let r = 0; r < teamSchedule.length; r++) {
+      let opponent = teamSchedule[r];
       if (opponent === "--") {
         continue;
       }
@@ -129,14 +174,12 @@ function simGames(ratings, schedule, numWeeksDone, conf) {
         opponent = opponent.substring(4, opponent.length);
         gameType = 2; // team is neutral
       }
-      if (opponent in schedule) {
-          let advantage = simGame(ratings, gameType, team, opponent);
-          if (advantage < 0) {
-            sheet.getRange(j + 4 + numWeeksDone, i).setBackground("red");
-          }
-          else {
-            sheet.getRange(j + 4 + numWeeksDone, i).setBackground("limegreen");
-          }
+      let advantage = simGame(ratings, gameType, team, opponent);
+      if (advantage < 0) {
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("red");
+      }
+      else {
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("limegreen");
       }
     }
   }
@@ -146,10 +189,10 @@ function simGames(ratings, schedule, numWeeksDone, conf) {
 function simGame(ratings, gameType, team, opponent) {
   let advantage = ratings[team] - ratings[opponent];
   if (gameType === 0) {
-    advantage += 5.5;
+    advantage += homefieldAdvantage;
   }
   if (gameType === 1) {
-    advantage -= 5.5;
+    advantage -= homefieldAdvantage;
   }
   return advantage;
 }
@@ -157,26 +200,35 @@ function simGame(ratings, gameType, team, opponent) {
 /* Calculates each team's record from its entire schedule */
 function calculateRecords(conf, standings, standingsEast, standingsNorth, standingsSouth, standingsWest) {
   const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
-  for (let c = 2; c <= 17; c++) {
-    const team = sheet.getRange(2, c).getValue();
+  const teams = sheet.getRange(2, 2, 1, 16).getValues();
+  const results = sheet.getRange(4, 2, 18, 16).getValues();
+  let records = [];
+  for (let c = 0; c < 16; c++) {
+    const team = teams[0][c];
     let numWinsOVR = 0;
     let numLossesOVR = 0;
     let numWinsDIV = 0;
     let numLossesDIV = 0;
     let numWinsCONF = 0;
     let numLossesCONF = 0;
-    for (let r = 4; r <= 21; r++) {
-      let opponent = sheet.getRange(r, c).getValue();
+    for (let r = 0; r < 18; r++) {
+      const result = sheet.getRange(r + 4, c + 2).getBackgroundColor();
+      
+      // Match was actually a bye week
+      if (result === "#ffffff") {
+        continue;
+      }
+      
+      // Parse opposing team name
+      let opponent = results[r][c];
       if (opponent.charAt(0) === '@') {
         opponent = opponent.substring(2, opponent.length);
       }
       else if (opponent.substring(0, 3) === "vs.") {
         opponent = opponent.substring(4, opponent.length);
       }
-      const result = sheet.getRange(r, c).getBackgroundColor();
-      if (result === "#ffffff") {
-        continue;
-      }
+      
+      // Team won the match
       if (result === "#ff0000") {
         numLossesOVR++;
         if (opponent in standingsEast || opponent in standingsNorth || opponent in standingsSouth || opponent in standingsWest) {
@@ -187,7 +239,9 @@ function calculateRecords(conf, standings, standingsEast, standingsNorth, standi
           }
         }
       }
-      if (result === "#32cd32") {
+      
+      // Team lost the match
+      else if (result === "#32cd32") {
         numWinsOVR++;
         if (opponent in standingsEast || opponent in standingsNorth || opponent in standingsSouth || opponent in standingsWest) {
           numWinsCONF++;
@@ -198,7 +252,7 @@ function calculateRecords(conf, standings, standingsEast, standingsNorth, standi
         }
       }
     }
-    sheet.getRange(3, c).setValue(numWinsOVR + "-" + numLossesOVR);
+    records.push(numWinsOVR + "-" + numLossesOVR);
     standings[team]["OVRwins"] = numWinsOVR;
     standings[team]["OVRlosses"] = numLossesOVR;
     standings[team]["DIVwins"] = numWinsDIV;
@@ -238,6 +292,8 @@ function calculateRecords(conf, standings, standingsEast, standingsNorth, standi
       standingsWest[team]["CONFlosses"] = numLossesCONF;
     }
   }
+  records = [records];
+  sheet.getRange(3, 2, 1, 16).setValues(records);
 }
 
 /* Calculates each team's strength of victory and strength of schedule for tiebreaking purposes */
@@ -323,57 +379,26 @@ function fillDivisionStandings(division, standings) {
   let col;
   switch (conf) {
     case "AFC":
-      col = 0;
+      col = 1;
       break;
     case "NFC":
-      col = 6;
+      col = 7;
       break;
   }
+  let standingsData = [];
   for (let i = 0; i < teams.length; i++) {
     const team = teams[i];
     const teamRecords = standings[team];
-    sheetStandings.getRange(row + i, col + 1).setValue(team);
-    sheetStandings.getRange(row + i, col + 2).setValue(teamRecords["OVRwins"] + "-" + teamRecords["OVRlosses"]);
-    sheetStandings.getRange(row + i, col + 3).setValue(teamRecords["DIVwins"] + "-" + teamRecords["DIVlosses"]);
-    sheetStandings.getRange(row + i, col + 4).setValue(teamRecords["CONFwins"] + "-" + teamRecords["CONFlosses"]);
+    let arr = [];
+    arr.push(team);
+    arr.push(teamRecords["OVRwins"] + "-" + teamRecords["OVRlosses"]);
+    arr.push(teamRecords["DIVwins"] + "-" + teamRecords["DIVlosses"]);
+    arr.push(teamRecords["CONFwins"] + "-" + teamRecords["CONFlosses"]);
+    arr.push(teamRecords["sov"]);
+    arr.push(teamRecords["sos"]);
+    standingsData.push(arr);
   }
-}
-
-/* Adds the computed strength of victory and strength of schedule metrics to the standings */
-function addStrengthToDivisionStandings(division, standings) {
-  const conf = division.substring(0, 3);
-  const div = division.substring(4, division.length);
-  const sheetStandings = SpreadsheetApp.getActive().getSheetByName("Standings");
-  let row;
-  switch (div) {
-    case "East":
-      row = 2;
-      break;
-    case "North":
-      row = 7;
-      break;
-    case "South":
-      row = 12;
-      break;
-    case "West":
-      row = 17;
-      break;
-  }
-  let col;
-  switch (conf) {
-    case "AFC":
-      col = 0;
-      break;
-    case "NFC":
-      col = 6;
-      break;
-  }
-  for (let i = 0; i < 4; i++) {
-    const team = sheetStandings.getRange(row + i, col + 1).getValue();
-    const teamRecords = standings[team];
-    sheetStandings.getRange(row + i, col + 5).setValue(teamRecords["sov"]);
-    sheetStandings.getRange(row + i, col + 6).setValue(teamRecords["sos"]);
-  }
+  sheetStandings.getRange(row, col, 4, 6).setValues(standingsData);
 }
 
 /* Sorts the given divison's standings based on overall team record (if tied, DIV record, CONF record, strength of victory, and then strength of schedule) */
