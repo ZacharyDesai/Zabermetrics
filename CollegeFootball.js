@@ -1,13 +1,17 @@
+// UPDATE EACH WEEK:
+const numWeeksDone = 0; // equivalent to the upcoming week #
+
+// UPDATE AS NEEDED:
+const homefieldAdvantage = 6.66;
+
+// UPDATE EACH SEASON:
+const confSizes = {AAC:11, ACC:14, B10:14, B12:10, CUSA:14, MAC:12, MWC:12, P12:12, SBC:10, SEC:14, IND:7};
+const numWeeks = 18;
+const rowGroupOf5 = 19; // on the Standings sheet
+const numTeams = 130;
+
+/* MAIN FUNCTION: Runs the simulation */
 function main() {
-  
-  // UPDATE EACH WEEK:
-  const numWeeksDone = 0; // equivalent to the upcoming week #
-  
-  // UPDATE EACH SEASON:
-  const confSizes = {AAC:11, ACC:14, B10:14, B12:10, CUSA:14, MAC:12, MWC:12, P12:12, SBC:10, SEC:14, IND:7};
-  const numWeeks = 18;
-  const rowGroupOf5 = 19;
-  const numTeams = 130;
   
   let schedule = {};
   let standings = {};
@@ -25,6 +29,8 @@ function main() {
   clear(numWeeks, numWeeksDone, rowGroupOf5, "SEC", confSizes.SEC);
   clear(numWeeks, numWeeksDone, rowGroupOf5, "IND", confSizes.IND);
   
+  loadRatings(ratings, numTeams);
+  
   loadGames(schedule, standings, numWeeks, numWeeksDone, "AAC", confSizes.AAC);
   loadGames(schedule, standings, numWeeks, numWeeksDone, "ACC", confSizes.ACC);
   loadGames(schedule, standings, numWeeks, numWeeksDone, "B10", confSizes.B10);
@@ -36,8 +42,6 @@ function main() {
   loadGames(schedule, standings, numWeeks, numWeeksDone, "SBC", confSizes.SBC);
   loadGames(schedule, standings, numWeeks, numWeeksDone, "SEC", confSizes.SEC);
   loadGames(schedule, standings, numWeeks, numWeeksDone, "IND", confSizes.IND);
-  
-  loadRatings(ratings, numWeeks);
   
   simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "AAC", confSizes.AAC);
   simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "ACC", confSizes.ACC);
@@ -76,30 +80,35 @@ function main() {
   generateStandings(standings, numWeeks, "IND", confSizes.IND);
 }
 
+/* UTILITY FUNCTION: Sorts team ratings in descending order automatically */
+function onEdit(e) {
+  const SHEET_NAME = "Ratings";
+  const SORT_DATA_RANGE = "C2:D131";
+  const SORT_ORDER = [{column: 4, ascending: false}];
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAME);
+  const range = sheet.getRange(SORT_DATA_RANGE);
+  range.sort(SORT_ORDER);
+}
+
 /* Clears any previous simulated material from the spreadsheet to reset it */
 function clear(numWeeks, numWeeksDone, rowGroupOf5, conf, confSize) {
-  const sheetRankings = SpreadsheetApp.getActive().getSheetByName("Rankings");
-  for (let i = numWeeksDone * 3; i < (numWeeks - 1) * 3; i += 3) {
-    for (let j = 3; j < 28; j++) {
-      sheetRankings.getRange(j, i + 2).setValue("");
-      sheetRankings.getRange(j, i + 2).setBackground("white");
-      sheetRankings.getRange(j, i + 3).setValue("");
-      sheetRankings.getRange(j, i + 3).setBackground("white");
-    }
-  }
+  
+  // Clear schedule sheets
   const sheetSchedule = SpreadsheetApp.getActive().getSheetByName(conf);
   const sheetStandings = SpreadsheetApp.getActive().getSheetByName("Standings");
   if (numWeeksDone < 18) {
     const start = numWeeksDone + 4;
-    for (let i = 2; i < confSize + 2; i++) {
-      for (let j = start; j < start + numWeeks; j++) {
-        sheetSchedule.getRange(j, i).setBackground("white");
-      }
-      sheetSchedule.getRange(3, i).setValue("--");
-      sheetSchedule.getRange(20, i).setValue("--");
-      sheetSchedule.getRange(21, i).setValue("--");
+    let clearedRecords = [];
+    for (let i = 0; i < confSize; i++) {
+      clearedRecords.push("--");
     }
+    clearedRecords = [clearedRecords];
+    sheetSchedule.getRange(3, 2, 1, confSize).setValues(clearedRecords);
+    sheetSchedule.getRange(start, 2, numWeeks, confSize).setBackground("white");
   }
+  
+  // Clear Standings sheet
   let range0 = "";
   let range1 = "";
   switch (conf) {
@@ -151,66 +160,48 @@ function clear(numWeeks, numWeeksDone, rowGroupOf5, conf, confSize) {
   }
 }
 
-/* Loads all remaining games into each team's schedule, and loads each team into each conference's standings */
-function loadGames(schedule, standings, numWeeks, numWeeksDone, conf, confSize) {
-  const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
-  let teams = {};
-  const start = numWeeksDone + 4;
-  for (let i = 2; i < confSize + 2; i++) {
-    const team = sheet.getRange(2, i).getValue();
-    let opponents = [];
-    for (let j = 0; j < numWeeks; j++) {
-      opponents[j] = sheet.getRange(j + start, i).getValue();
-    }
-    schedule[team] = opponents;
-    teams[team] = {};
-  }
-  standings[conf] = teams;
-}
-
 /* Loads all ratings for each team */
 function loadRatings(ratings, numTeams) {
   const sheet = SpreadsheetApp.getActive().getSheetByName("Ratings");
-  for (let i = 2; i < numTeams + 2; i++) {
-    const team = sheet.getRange(i, 1).getValue();
-    const passOFF = sheet.getRange(i, 2).getValue();
-    const rushOFF = sheet.getRange(i, 3).getValue();
-    const passDEF = sheet.getRange(i, 4).getValue();
-    const rushDEF = sheet.getRange(i, 5).getValue();
-    const overall = sheet.getRange(i, 6).getValue();
-    ratings[team] = {};
-    ratings[team]["Pass OFF"] = passOFF;
-    ratings[team]["Rush OFF"] = rushOFF;
-    ratings[team]["Pass DEF"] = passDEF;
-    ratings[team]["Rush DEF"] = rushDEF;
-    ratings[team]["Overall"] = overall;
+  const ratingsData = sheet.getRange(2, 1, numTeams, 2).getValues();
+  for (let i = 0; i < numTeams; i++) {
+    const team = ratingsData[i][0];
+    const rating = ratingsData[i][1];
+    ratings[team] = rating;
+  }
+}
+
+/* Loads all remaining games into each team's schedule, and loads each team into each conference's standings */
+function loadGames(schedule, standings, numWeeks, numWeeksDone, conf, confSize) {
+  if (numWeeksDone >= numWeeks) {
+    return;
+  }
+  
+  const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
+  let teams = sheet.getRange(2, 2, 1, confSize).getValues();
+  const games = sheet.getRange(numWeeksDone + 4, 2, numWeeks - numWeeksDone, confSize).getValues();
+  standings[conf] = [];
+  let confStandings = standings[conf];
+  for (let c = 0; c < confSize; c++) {
+    const team = teams[0][c];
+    schedule[team] = [];
+    for (let r = 0; r < games.length; r++) {
+      schedule[team].push(games[r][c]);
+    }
+    confStandings[team] = {};
   }
 }
 
 /* Simulates every remaining game on every team's schedule */
 function simGames(schedule, standings, ratings, numWeeks, numWeeksDone, conf, confSize) {
-  // The following array is to be used as a tiebreaker in simulating games; simulated games should only look at team ratings and home field advantage first
-  const teamRatings = ["CLEMSON", "OHIO STATE", "OKLAHOMA", "ALABAMA", "PENN STATE", "WISCONSIN", "TEXAS", "TEXAS A&M", "NOTRE DAME", "GEORGIA",
-                       "FLORIDA", "LSU", "USC", "OREGON", "AUBURN", "MICHIGAN", "OKLAHOMA STATE", "NORTH CAROLINA", "TENNESSEE", "MINNESOTA",
-                       "UCF", "NEBRASKA", "FLORIDA STATE", "UTAH", "VIRGINIA TECH", "INDIANA", "IOWA", "STANFORD", "WASHINGTON", "CALIFORNIA",
-                       "IOWA STATE", "TCU", "KENTUCKY", "SOUTH CAROLINA", "LOUISVILLE", "PURDUE", "MIAMI (FL)", "NORTHWESTERN", "MISSISSIPPI STATE", "CINCINNATI",
-                       "ARIZONA STATE", "OLE MISS", "PITTSBURGH", "BAYLOR", "HOUSTON", "TEXAS TECH", "VIRGINIA", "WEST VIRGINIA", "UCLA", "KANSAS STATE",
-                       "BOISE STATE", "NAVY", "MISSOURI", "WASHINGTON STATE", "GEORGIA TECH", "COLORADO", "MEMPHIS", "MICHIGAN STATE", "NC STATE", "SMU",
-                       "LOUISIANA-LAFAYETTE", "BYU", "ARIZONA", "DUKE", "ILLINOIS", "ARKANSAS", "OREGON STATE", "MARYLAND", "WAKE FOREST", "TULSA",
-                       "BUFFALO", "SYRACUSE", "WESTERN KENTUCKY", "TULANE", "APPALACHIAN STATE", "AIR FORCE", "WYOMING", "BOSTON COLLEGE", "SOUTHERN MISS", "MARSHALL",
-                       "VANDERBILT", "WESTERN MICHIGAN", "RUTGERS", "MIAMI (OH)", "UAB", "USF", "ARKANSAS STATE", "SAN DIEGO STATE", "FAU", "OHIO",
-                       "TEMPLE", "MIDDLE TENNESSEE", "FRESNO STATE", "BALL STATE", "UTAH STATE", "COLORADO STATE", "EAST CAROLINA", "NEVADA", "GEORGIA SOUTHERN", "ARMY",
-                       "TOLEDO", "NORTHERN ILLINOIS", "CENTRAL MICHIGAN", "KANSAS", "LOUISIANA TECH", "KENT STATE", "GEORGIA STATE", "SAN JOSE STATE", "RICE", "TROY",
-                       "CHARLOTTE", "COASTAL CAROLINA", "LOUISIANA-MONROE", "SOUTH ALABAMA", "NORTH TEXAS", "UTSA", "UNLV", "OLD DOMINION", "HAWAI'I", "FIU",
-                       "EASTERN MICHIGAN", "LIBERTY", "CONNECTICUT", "NEW MEXICO", "TEXAS STATE", "NEW MEXICO STATE", "BOWLING GREEN", "AKRON", "UTEP", "MASSACHUSETTS"];
   const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
-  const start = numWeeksDone + 4;
-  for (let i = 2; i < confSize + 2; i++) {
-    const team = sheet.getRange(2, i).getValue();
+  const teams = sheet.getRange(2, 2, 1, confSize).getValues();
+  for (let c = 0; c < confSize; c++) {
+    const team = teams[0][c];
     const teamSchedule = schedule[team];
     standings[conf][team] = {};
-    for (let j = 0; j < teamSchedule.length; j++) {
-      let opponent = teamSchedule[j].toUpperCase();
+    for (let r = 0; r < teamSchedule.length; r++) {
+      let opponent = teamSchedule[r].toUpperCase();
       if (opponent === "--") {
         continue;
       }
@@ -223,174 +214,203 @@ function simGames(schedule, standings, ratings, numWeeks, numWeeksDone, conf, co
         opponent = opponent.substring(4, opponent.length);
         gameType = 2; // team is neutral
       }
-      if (opponent in schedule) {
-        let opponentOpponent = schedule[opponent][j].toUpperCase();
-        if (gameType === 0) {
-          opponentOpponent = opponentOpponent.substring(2, opponentOpponent.length);
-        }
-        else if (gameType === 2) {
-          opponentOpponent = opponentOpponent.substring(4, opponentOpponent.length);
-        }
-        if (team === opponentOpponent) {
-          let advantage = simGame(ratings, teamRatings, gameType, team, opponent);
-          if (advantage < 0) {
-            sheet.getRange(j + start, i).setBackground("red");
-            continue;
-          }
-        }
+      
+      // Team is playing an FCS team (mark as a win)
+      if (!(opponent in schedule)) {
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("limegreen");
+        continue;
       }
-      sheet.getRange(j + start, i).setBackground("limegreen");
+      
+      let advantage = simGame(ratings, gameType, team, opponent);
+      
+      // Team lost the match
+      if (advantage < 0) {
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("red");
+      }
+      
+      // Team won the match
+      else if (advantage > 0) {
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("limegreen");
+      }
+      
+      // Match is dead even - flag as yellow to manually pick later
+      else {
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("yellow");
+      }
     }
   }
 }
 
 /* Simulates a certain given by the parameters */
-function simGame(ratings, teamRatings, gameType, team, opponent) {
-  // The following code is a temporary placeholder to be used before team ratings for the season are actually computed
-  let advantage = teamRatings.indexOf(opponent) - teamRatings.indexOf(team);
+function simGame(ratings, gameType, team, opponent) {
+  let advantage = ratings[team] - ratings[opponent];
   if (gameType === 0) {
-    advantage += 12.5;
+    advantage += homefieldAdvantage;
   }
   if (gameType === 1) {
-    advantage -= 12.5;
+    advantage -= homefieldAdvantage;
+  }
+  if (advantage == 0) {
+    if (ratings[team] != ratings[opponent]) {
+      advantage = ratings[team] - ratings[opponent];
+    }
+    else if (gameType != 2) {
+      advantage = gameType === 0 ? 1 : -1;
+    }
   }
   return advantage;
-//  let advantage = ratings[team]["Overall"] - ratings[opponent]["Overall"];
-//  if (gameType === 0) {
-//    advantage += 10;
-//  }
-//  if (gameType === 1) {
-//    advantage -= 10;
-//  }
-//  if (advantage === 0) {
-//    advantage = teamRatings.indexOf(opponent) - teamRatings.indexOf(team);
-//  }
-//  return advantage;
 }
 
 /* Calculates each team's record from its entire schedule */
 function calculateRecords(standings, numWeeks, conf, confSize) {
   const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
-  for (let i = 2; i < confSize + 2; i++) {
-    const team = sheet.getRange(2, i).getValue();
+  const teams = sheet.getRange(2, 2, 1, confSize).getValues();
+  const results = sheet.getRange(4, 2, numWeeks, 16).getValues();
+  let records = [];
+  for (let c = 0; c < confSize; c++) {
+    const team = teams[0][c];
     let numWinsOVR = 0;
     let numLossesOVR = 0;
     let numWinsCONF = 0;
     let numLossesCONF = 0;
-    for (let j = 4; j < 4 + numWeeks; j++) {
-      let opponent = sheet.getRange(j, i).getValue().toUpperCase();
+    for (let r = 0; r < numWeeks; r++) {
+      const result = sheet.getRange(r + 4, c + 2).getBackgroundColor();
+      
+      // Match was actually a bye week
+      if (result === "#ffffff") {
+        continue;
+      }
+      
+      // Parse opposing team name
+      let opponent = results[r][c].toUpperCase();
       if (opponent.charAt(0) === '@') {
         opponent = opponent.substring(2, opponent.length);
       }
       else if (opponent.substring(0, 3) === "VS.") {
         opponent = opponent.substring(4, opponent.length);
       }
-      const result = sheet.getRange(j, i).getBackgroundColor();
-      if (result === "#ffffff") {
-        continue;
-      }
+      
+      // Team won the match
       if (result === "#ff0000") {
         numLossesOVR++;
         if (opponent in standings[conf]) {
           numLossesCONF++;
         }
       }
-      else {
+      
+      // Team lost the match
+      else if (result === "#32cd32") {
         numWinsOVR++;
         if (opponent in standings[conf]) {
           numWinsCONF++;
         }
       }
     }
+    
+    // Don't show conference record for independent teams
     if (conf === "IND") {
       numWinsCONF = 0;
       numLossesCONF = 0;
-      sheet.getRange(3, i).setValue(numWinsOVR + "-" + numLossesOVR);
+      records.push(numWinsOVR + "-" + numLossesOVR);
     }
     else {
-      sheet.getRange(3, i).setValue(numWinsOVR + "-" + numLossesOVR + " (" + numWinsCONF + "-" + numLossesCONF + ")");
+      records.push(numWinsOVR + "-" + numLossesOVR + " (" + numWinsCONF + "-" + numLossesCONF + ")");
     }
+    
     standings[conf][team]["OVR Wins"] = numWinsOVR;
     standings[conf][team]["OVR Losses"] = numLossesOVR;
     standings[conf][team]["CONF Wins"] = numWinsCONF;
     standings[conf][team]["CONF Losses"] = numLossesCONF;
+    
+    // Don't show divisions for independents or conferences without divisions
     if (conf === "AAC" || conf === "B12" || conf === "IND") {
       standings[conf][team]["Division"] = -1;
     }
     else {
-      if (i - 2 < confSize / 2) {
+      if (c < confSize / 2) {
         standings[conf][team]["Division"] = 0;
       }
       else {
         standings[conf][team]["Division"] = 1;
       }
-      index = i - 1;
     }
   }
+  
+  records = [records];
+  sheet.getRange(3, 2, 1, confSize).setValues(records);
 }
 
 /* Generates each conference's standings based on each of its team's records */
 function generateStandings(standings, numWeeks, conf, confSize) {
-  const sheetSchedule = SpreadsheetApp.getActive().getSheetByName(conf);
-  const sheetStandings = SpreadsheetApp.getActive().getSheetByName("Standings");
+  const sheet = SpreadsheetApp.getActive().getSheetByName("Standings");
   let confStandings = standings[conf];
   let confTeams = Object.keys(confStandings);
   confTeams.sort(sortByRecord(confStandings));
   if (conf === "AAC" || conf === "B12" || conf === "IND") {
     let row = 2;
-    let col = 0;
+    let col = 1;
     if (conf === "AAC") {
       row = 20;
     }
     if (conf === "B12") {
-      col = 6;
+      col = 7;
     }
     if (conf === "IND") {
-      col = 15;
+      col = 16;
     }
+    let confData = [];
     for (let i = 0; i < confTeams.length; i++) {
       const team = confTeams[i];
       const teamRecords = confStandings[team];
-      sheetStandings.getRange(row + i, col + 1).setValue(team);
-      sheetStandings.getRange(row + i, col + 2).setValue(teamRecords["OVR Wins"] + "-" + teamRecords["OVR Losses"]);
-      sheetStandings.getRange(row + i, col + 3).setValue(teamRecords["CONF Wins"] + "-" + teamRecords["CONF Losses"]);
+      let arr = [];
+      arr.push(team);
+      arr.push(teamRecords["OVR Wins"] + "-" + teamRecords["OVR Losses"]);
+      arr.push(teamRecords["CONF Wins"] + "-" + teamRecords["CONF Losses"]);
+      confData.push(arr);
     }
+    sheet.getRange(row, col, confSize, 3).setValues(confData);
   }
   else {
-    let divARow = 2;
+    let divARow = 3;
     if (conf === "CUSA" || conf === "MAC" || conf === "MWC" || conf === "SBC") {
-      divARow = 20;
+      divARow = 21;
     }
     let divBRow = divARow + confSize / 2 + 1;
-    let col = 0;
+    let col = 1;
     if (conf === "B10" || conf === "CUSA") {
-      col = 3;
+      col = 4;
     }
     if (conf === "MAC") {
-      col = 6;
+      col = 7;
     }
     if (conf === "P12" || conf === "MWC") {
-      col = 9;
+      col = 10;
     }
     if (conf === "SEC" || conf === "SBC") {
-      col = 12;
+      col = 13;
     }
+    let divAData = [];
+    let divBData = [];
     for (let i = 0; i < confTeams.length; i++) {
       const team = confTeams[i];
       const teamRecords = confStandings[team];
       if (teamRecords["Division"] === 0) {
-        divARow++;
-        sheetStandings.getRange(divARow, col + 1).setValue(team);
-        sheetStandings.getRange(divARow, col + 2).setValue(teamRecords["OVR Wins"] + "-" + teamRecords["OVR Losses"]);
-        sheetStandings.getRange(divARow, col + 3).setValue(teamRecords["CONF Wins"] + "-" + teamRecords["CONF Losses"]);
+        let arr = [];
+        arr.push(team);
+        arr.push(teamRecords["OVR Wins"] + "-" + teamRecords["OVR Losses"]);
+        arr.push(teamRecords["CONF Wins"] + "-" + teamRecords["CONF Losses"]);
+        divAData.push(arr);
       }
       else {
-        divBRow++;
-        sheetStandings.getRange(divBRow, col + 1).setValue(team);
-        sheetStandings.getRange(divBRow, col + 2).setValue(teamRecords["OVR Wins"] + "-" + teamRecords["OVR Losses"]);
-        sheetStandings.getRange(divBRow, col + 3).setValue(teamRecords["CONF Wins"] + "-" + teamRecords["CONF Losses"]);
+        let arr = [];
+        arr.push(team);
+        arr.push(teamRecords["OVR Wins"] + "-" + teamRecords["OVR Losses"]);
+        arr.push(teamRecords["CONF Wins"] + "-" + teamRecords["CONF Losses"]);
+        divBData.push(arr);
       }
     }
+    sheet.getRange(divARow, col, confSize / 2, 3).setValues(divAData);
+    sheet.getRange(divBRow, col, confSize / 2, 3).setValues(divBData);
   }
 }
 
