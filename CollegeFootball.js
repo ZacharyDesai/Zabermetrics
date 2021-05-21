@@ -5,7 +5,7 @@ const numWeeksDone = 0; // equivalent to the upcoming week #
 const homefieldAdvantage = 6.66;
 
 // UPDATE EACH SEASON:
-const confSizes = {AAC:11, ACC:14, B10:14, B12:10, CUSA:14, MAC:12, MWC:12, P12:12, SBC:10, SEC:14, IND:7};
+const confSizes = {"AAC":11, "ACC":14, "B10":14, "B12":10, "CUSA":14, "MAC":12, "MWC":12, "P12":12, "SBC":10, "SEC":14, "IND":7};
 const numWeeks = 18;
 const rowGroupOf5 = 19; // on the Standings sheet
 const numTeams = 130;
@@ -17,67 +17,160 @@ function main() {
   let standings = {};
   let ratings = {};
   
-  clear(numWeeks, numWeeksDone, rowGroupOf5, "AAC", confSizes.AAC);
-  clear(numWeeks, numWeeksDone, rowGroupOf5, "ACC", confSizes.ACC);
-  clear(numWeeks, numWeeksDone, rowGroupOf5, "B10", confSizes.B10);
-  clear(numWeeks, numWeeksDone, rowGroupOf5, "B12", confSizes.B12);
-  clear(numWeeks, numWeeksDone, rowGroupOf5, "CUSA", confSizes.CUSA);
-  clear(numWeeks, numWeeksDone, rowGroupOf5, "MAC", confSizes.MAC);
-  clear(numWeeks, numWeeksDone, rowGroupOf5, "MWC", confSizes.MWC);
-  clear(numWeeks, numWeeksDone, rowGroupOf5, "P12", confSizes.P12);
-  clear(numWeeks, numWeeksDone, rowGroupOf5, "SBC", confSizes.SBC);
-  clear(numWeeks, numWeeksDone, rowGroupOf5, "SEC", confSizes.SEC);
-  clear(numWeeks, numWeeksDone, rowGroupOf5, "IND", confSizes.IND);
+  clear("AAC");
+  clear("ACC");
+  clear("B10");
+  clear("B12");
+  clear("CUSA");
+  clear("MAC");
+  clear("MWC");
+  clear("P12");
+  clear("SBC");
+  clear("SEC");
+  clear("IND");
   
-  loadRatings(ratings, numTeams);
+  loadRatings(ratings);
   
-  loadGames(schedule, standings, numWeeks, numWeeksDone, "AAC", confSizes.AAC);
-  loadGames(schedule, standings, numWeeks, numWeeksDone, "ACC", confSizes.ACC);
-  loadGames(schedule, standings, numWeeks, numWeeksDone, "B10", confSizes.B10);
-  loadGames(schedule, standings, numWeeks, numWeeksDone, "B12", confSizes.B12);
-  loadGames(schedule, standings, numWeeks, numWeeksDone, "CUSA", confSizes.CUSA);
-  loadGames(schedule, standings, numWeeks, numWeeksDone, "MAC", confSizes.MAC);
-  loadGames(schedule, standings, numWeeks, numWeeksDone, "MWC", confSizes.MWC);
-  loadGames(schedule, standings, numWeeks, numWeeksDone, "P12", confSizes.P12);
-  loadGames(schedule, standings, numWeeks, numWeeksDone, "SBC", confSizes.SBC);
-  loadGames(schedule, standings, numWeeks, numWeeksDone, "SEC", confSizes.SEC);
-  loadGames(schedule, standings, numWeeks, numWeeksDone, "IND", confSizes.IND);
+  loadGames(schedule, standings, "AAC");
+  loadGames(schedule, standings, "ACC");
+  loadGames(schedule, standings, "B10");
+  loadGames(schedule, standings, "B12");
+  loadGames(schedule, standings, "CUSA");
+  loadGames(schedule, standings, "MAC");
+  loadGames(schedule, standings, "MWC");
+  loadGames(schedule, standings, "P12");
+  loadGames(schedule, standings, "SBC");
+  loadGames(schedule, standings, "SEC");
+  loadGames(schedule, standings, "IND");
   
-  simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "AAC", confSizes.AAC);
-  simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "ACC", confSizes.ACC);
-  simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "B10", confSizes.B10);
-  simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "B12", confSizes.B12);
-  simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "CUSA", confSizes.CUSA);
-  simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "MAC", confSizes.MAC);
-  simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "MWC", confSizes.MWC);
-  simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "P12", confSizes.P12);
-  simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "SBC", confSizes.SBC);
-  simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "SEC", confSizes.SEC);
-  simGames(schedule, standings, ratings, numWeeks, numWeeksDone, "IND", confSizes.IND);
+  simGames(schedule, standings, ratings, "AAC");
+  simGames(schedule, standings, ratings, "ACC");
+  simGames(schedule, standings, ratings, "B10");
+  simGames(schedule, standings, ratings, "B12");
+  simGames(schedule, standings, ratings, "CUSA");
+  simGames(schedule, standings, ratings, "MAC");
+  simGames(schedule, standings, ratings, "MWC");
+  simGames(schedule, standings, ratings, "P12");
+  simGames(schedule, standings, ratings, "SBC");
+  simGames(schedule, standings, ratings, "SEC");
+  simGames(schedule, standings, ratings, "IND");
   
-  calculateRecords(standings, numWeeks, "AAC", confSizes.AAC);
-  calculateRecords(standings, numWeeks, "ACC", confSizes.ACC);
-  calculateRecords(standings, numWeeks, "B10", confSizes.B10);
-  calculateRecords(standings, numWeeks, "B12", confSizes.B12);
-  calculateRecords(standings, numWeeks, "CUSA", confSizes.CUSA);
-  calculateRecords(standings, numWeeks, "MAC", confSizes.MAC);
-  calculateRecords(standings, numWeeks, "MWC", confSizes.MWC);
-  calculateRecords(standings, numWeeks, "P12", confSizes.P12);
-  calculateRecords(standings, numWeeks, "SBC", confSizes.SBC);
-  calculateRecords(standings, numWeeks, "SEC", confSizes.SEC);
-  calculateRecords(standings, numWeeks, "IND", confSizes.IND);
+  calculateRecords(standings, "AAC");
+  calculateRecords(standings, "ACC");
+  calculateRecords(standings, "B10");
+  calculateRecords(standings, "B12");
+  calculateRecords(standings, "CUSA");
+  calculateRecords(standings, "MAC");
+  calculateRecords(standings, "MWC");
+  calculateRecords(standings, "P12");
+  calculateRecords(standings, "SBC");
+  calculateRecords(standings, "SEC");
+  calculateRecords(standings, "IND");
   
-  generateStandings(standings, numWeeks, "AAC", confSizes.AAC);
-  generateStandings(standings, numWeeks, "ACC", confSizes.ACC);
-  generateStandings(standings, numWeeks, "B10", confSizes.B10);
-  generateStandings(standings, numWeeks, "B12", confSizes.B12);
-  generateStandings(standings, numWeeks, "CUSA", confSizes.CUSA);
-  generateStandings(standings, numWeeks, "MAC", confSizes.MAC);
-  generateStandings(standings, numWeeks, "MWC", confSizes.MWC);
-  generateStandings(standings, numWeeks, "P12", confSizes.P12);
-  generateStandings(standings, numWeeks, "SBC", confSizes.SBC);
-  generateStandings(standings, numWeeks, "SEC", confSizes.SEC);
-  generateStandings(standings, numWeeks, "IND", confSizes.IND);
+  generateStandings(standings, "AAC");
+  generateStandings(standings, "ACC");
+  generateStandings(standings, "B10");
+  generateStandings(standings, "B12");
+  generateStandings(standings, "CUSA");
+  generateStandings(standings, "MAC");
+  generateStandings(standings, "MWC");
+  generateStandings(standings, "P12");
+  generateStandings(standings, "SBC");
+  generateStandings(standings, "SEC");
+  generateStandings(standings, "IND");
+}
+
+/* UTILITY FUNCTION: Use to check if the schedule was inputted correctly */
+function checkSchedule() {
+  
+  let schedule = {};
+  let standings = {};
+  
+  clear("AAC");
+  clear("ACC");
+  clear("B10");
+  clear("B12");
+  clear("CUSA");
+  clear("MAC");
+  clear("MWC");
+  clear("P12");
+  clear("SBC");
+  clear("SEC");
+  clear("IND");
+  
+  loadGames(schedule, standings, "AAC");
+  loadGames(schedule, standings, "ACC");
+  loadGames(schedule, standings, "B10");
+  loadGames(schedule, standings, "B12");
+  loadGames(schedule, standings, "CUSA");
+  loadGames(schedule, standings, "MAC");
+  loadGames(schedule, standings, "MWC");
+  loadGames(schedule, standings, "P12");
+  loadGames(schedule, standings, "SBC");
+  loadGames(schedule, standings, "SEC");
+  loadGames(schedule, standings, "IND");
+  
+  checkScheduleHelper(schedule, "AAC");
+  checkScheduleHelper(schedule, "ACC");
+  checkScheduleHelper(schedule, "B10");
+  checkScheduleHelper(schedule, "B12");
+  checkScheduleHelper(schedule, "CUSA");
+  checkScheduleHelper(schedule, "MAC");
+  checkScheduleHelper(schedule, "MWC");
+  checkScheduleHelper(schedule, "P12");
+  checkScheduleHelper(schedule, "SBC");
+  checkScheduleHelper(schedule, "SEC");
+  checkScheduleHelper(schedule, "IND");
+}
+
+// Checks each match in schedule to make sure each opponent is an actual team
+function checkScheduleHelper(schedule, conf) {
+  const confSize = confSizes[conf];
+  const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
+  const teams = sheet.getRange(2, 2, 1, confSize).getValues();
+  for (let c = 0; c < confSize; c++) {
+    const team = teams[0][c];
+    const teamSchedule = schedule[team];
+    for (let r = 0; r < teamSchedule.length; r++) {
+      let opponent = teamSchedule[r].toUpperCase();
+      
+      // Mark byes as yellow
+      if (opponent === "--") {
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("yellow");
+        continue;
+        
+      }
+      let gameType = 0; // team is home
+      if (opponent.charAt(0) === '@') {
+        opponent = opponent.substring(2, opponent.length);
+        gameType = 1; // team is away
+      }
+      else if (opponent.substring(0, 3) === "VS.") {
+        opponent = opponent.substring(4, opponent.length);
+        gameType = 2; // team is neutral
+      }
+      
+      // Mark games against FCS teams as green
+      if (!(opponent in schedule)) {
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("limegreen");
+      }
+      
+      // Flag mismatching games against FBS teams as red
+      else {
+        const opponentSchedule = schedule[opponent];
+        let opponentOpponent = opponentSchedule[r].toUpperCase();
+        if (gameType === 0) {
+          opponentOpponent = opponentOpponent.substring(2, opponentOpponent.length);
+        }
+        else if (gameType === 2) {
+          opponentOpponent = opponentOpponent.substring(4, opponentOpponent.length);
+        }
+        if (team != opponentOpponent) {
+          sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("red");
+        }
+      }
+    }
+  }
 }
 
 /* UTILITY FUNCTION: Sorts team ratings in descending order automatically */
@@ -92,7 +185,8 @@ function onEdit(e) {
 }
 
 /* Clears any previous simulated material from the spreadsheet to reset it */
-function clear(numWeeks, numWeeksDone, rowGroupOf5, conf, confSize) {
+function clear(conf) {
+  const confSize = confSizes[conf];
   
   // Clear schedule sheets
   const sheetSchedule = SpreadsheetApp.getActive().getSheetByName(conf);
@@ -161,7 +255,7 @@ function clear(numWeeks, numWeeksDone, rowGroupOf5, conf, confSize) {
 }
 
 /* Loads all ratings for each team */
-function loadRatings(ratings, numTeams) {
+function loadRatings(ratings) {
   const sheet = SpreadsheetApp.getActive().getSheetByName("Ratings");
   const ratingsData = sheet.getRange(2, 1, numTeams, 2).getValues();
   for (let i = 0; i < numTeams; i++) {
@@ -172,14 +266,14 @@ function loadRatings(ratings, numTeams) {
 }
 
 /* Loads all remaining games into each team's schedule, and loads each team into each conference's standings */
-function loadGames(schedule, standings, numWeeks, numWeeksDone, conf, confSize) {
-  if (numWeeksDone >= numWeeks) {
-    return;
-  }
-  
+function loadGames(schedule, standings, conf) {
+  const confSize = confSizes[conf];
   const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
   let teams = sheet.getRange(2, 2, 1, confSize).getValues();
-  const games = sheet.getRange(numWeeksDone + 4, 2, numWeeks - numWeeksDone, confSize).getValues();
+  let games = [];
+  if (numWeeksDone < numWeeks) {
+    games = sheet.getRange(numWeeksDone + 4, 2, numWeeks - numWeeksDone, confSize).getValues();
+  }
   standings[conf] = [];
   let confStandings = standings[conf];
   for (let c = 0; c < confSize; c++) {
@@ -193,7 +287,8 @@ function loadGames(schedule, standings, numWeeks, numWeeksDone, conf, confSize) 
 }
 
 /* Simulates every remaining game on every team's schedule */
-function simGames(schedule, standings, ratings, numWeeks, numWeeksDone, conf, confSize) {
+function simGames(schedule, standings, ratings, conf) {
+  const confSize = confSizes[conf];
   const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
   const teams = sheet.getRange(2, 2, 1, confSize).getValues();
   for (let c = 0; c < confSize; c++) {
@@ -202,9 +297,24 @@ function simGames(schedule, standings, ratings, numWeeks, numWeeksDone, conf, co
     standings[conf][team] = {};
     for (let r = 0; r < teamSchedule.length; r++) {
       let opponent = teamSchedule[r].toUpperCase();
+      
+      // If match is a bye week, skip it
       if (opponent === "--") {
         continue;
       }
+      
+      // If match has the hidden special ! character, team lost the match (manual pick)
+      if (opponent.charAt(0) === "!") {
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("red");
+        continue;
+      }
+      
+      // If match has the hidden special $ character, team won the match (manual pick)
+      if (opponent.charAt(0) === "$") {
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("limegreen");
+        continue;
+      }
+      
       let gameType = 0; // team is home
       if (opponent.charAt(0) === '@') {
         opponent = opponent.substring(2, opponent.length);
@@ -262,7 +372,8 @@ function simGame(ratings, gameType, team, opponent) {
 }
 
 /* Calculates each team's record from its entire schedule */
-function calculateRecords(standings, numWeeks, conf, confSize) {
+function calculateRecords(standings, conf) {
+  const confSize = confSizes[conf];
   const sheet = SpreadsheetApp.getActive().getSheetByName(conf);
   const teams = sheet.getRange(2, 2, 1, confSize).getValues();
   const results = sheet.getRange(4, 2, numWeeks, 16).getValues();
@@ -341,7 +452,8 @@ function calculateRecords(standings, numWeeks, conf, confSize) {
 }
 
 /* Generates each conference's standings based on each of its team's records */
-function generateStandings(standings, numWeeks, conf, confSize) {
+function generateStandings(standings, conf) {
+  const confSize = confSizes[conf];
   const sheet = SpreadsheetApp.getActive().getSheetByName("Standings");
   let confStandings = standings[conf];
   let confTeams = Object.keys(confStandings);
