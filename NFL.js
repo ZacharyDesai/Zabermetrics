@@ -361,7 +361,6 @@ function calculateStrengthMetrics(conf, standings, standingsEast, standingsNorth
 function fillDivisionStandings(division, standings) {
   const conf = division.substring(0, 3);
   const div = division.substring(4, division.length);
-  const sheetSchedule = SpreadsheetApp.getActive().getSheetByName(conf);
   const sheetStandings = SpreadsheetApp.getActive().getSheetByName("Standings");
   let teams = Object.keys(standings);
   teams.sort(sortByRecord(standings));
