@@ -361,7 +361,7 @@ function calculateStrengthMetrics(conf, standings, standingsEast, standingsNorth
 function fillDivisionStandings(division, standings) {
   const conf = division.substring(0, 3);
   const div = division.substring(4, division.length);
-  const sheetStandings = SpreadsheetApp.getActive().getSheetByName("Standings");
+  const sheet = SpreadsheetApp.getActive().getSheetByName("Standings");
   let teams = Object.keys(standings);
   teams.sort(sortByRecord(standings));
   let row;
@@ -401,7 +401,7 @@ function fillDivisionStandings(division, standings) {
     arr.push(teamRecords["sos"]);
     standingsData.push(arr);
   }
-  sheetStandings.getRange(row, col, 4, 6).setValues(standingsData);
+  sheet.getRange(row, col, 4, 6).setValues(standingsData);
 }
 
 /* Sorts the given divison's standings based on overall team record (if tied, DIV record, CONF record, strength of victory, and then strength of schedule) */
