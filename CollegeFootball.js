@@ -176,8 +176,8 @@ function checkScheduleHelper(schedule, conf) {
 /* UTILITY FUNCTION: Sorts team ratings in descending order automatically */
 function onEdit(e) {
   const SHEET_NAME = "Ratings";
-  const SORT_DATA_RANGE = "C2:D131";
-  const SORT_ORDER = [{column: 4, ascending: false}];
+  const SORT_DATA_RANGE = "D2:E131";
+  const SORT_ORDER = [{column: 5, ascending: false}];
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(SHEET_NAME);
   const range = sheet.getRange(SORT_DATA_RANGE);
