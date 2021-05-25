@@ -2,7 +2,7 @@
 const numWeeksDone = 0; // equivalent to the upcoming week #
 
 // UPDATE AS NEEDED:
-const homefieldAdvantage = 6.66;
+const homefieldAdvantage = 3.33;
 
 // UPDATE EACH SEASON:
 const confSizes = {"AAC":11, "ACC":14, "B10":14, "B12":10, "CUSA":14, "MAC":12, "MWC":12, "P12":12, "SBC":10, "SEC":14, "IND":7};
