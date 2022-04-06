@@ -138,7 +138,7 @@ function clear() {
   }
   
   // After clearing all rounds, clear the picks by team sheet
-  SpreadsheetApp.getActive().getSheetByName(`BY TEAM`).getRange(3, 1, 30, 128).clearContent();
+  SpreadsheetApp.getActive().getSheetByName(`BY TEAM`).getRange(3, 1, 98, 128).clearContent();
 }
 
 /* Clears the pick/team specific information on the main sheet */
