@@ -2,7 +2,7 @@
 const numWeeksDone = 0; // equivalent to the previous week #
 
 // UPDATE AS NEEDED:
-const homefieldAdvantage = 3.33;
+const homefieldAdvantage = 4.44;
 
 /* MAIN FUNCTION: Runs the simulation */
 function main() {
@@ -81,7 +81,7 @@ function checkScheduleHelper(schedule, conf) {
 function clear() {
   
   // Clear Standings sheet
-  const sheetStandings = SpreadsheetApp.getActive().getSheetByName("Standings");
+  const sheetStandings = SpreadsheetApp.getActive().getSheetByName("Simulated Standings");
   let clearedStandings = [];
   for (let r = 0; r < 4; r++) {
     let arr = [];
@@ -361,7 +361,7 @@ function calculateStrengthMetrics(conf, standings, standingsEast, standingsNorth
 function fillDivisionStandings(division, standings) {
   const conf = division.substring(0, 3);
   const div = division.substring(4, division.length);
-  const sheet = SpreadsheetApp.getActive().getSheetByName("Standings");
+  const sheet = SpreadsheetApp.getActive().getSheetByName("Simulated Standings");
   let teams = Object.keys(standings);
   teams.sort(sortByRecord(standings));
   let row;
