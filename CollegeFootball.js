@@ -1,14 +1,14 @@
 // UPDATE EACH WEEK:
-const numWeeksDone = 0; // equivalent to the upcoming week #
+const numWeeksDone = 18; // equivalent to the upcoming week #
 
 // UPDATE AS NEEDED:
 const homefieldAdvantage = 3.33;
 
 // UPDATE EACH SEASON:
-const confSizes = {"AAC":11, "ACC":14, "B10":14, "B12":10, "CUSA":14, "MAC":12, "MWC":12, "P12":12, "SBC":10, "SEC":14, "IND":7};
+const confSizes = {"AAC":11, "ACC":14, "B10":14, "B12":10, "CUSA":11, "MAC":12, "MWC":12, "P12":12, "SBC":14, "SEC":14, "IND":7};
 const numWeeks = 18;
 const rowGroupOf5 = 19; // on the Standings sheet
-const numTeams = 130;
+const numTeams = 131;
 
 /* MAIN FUNCTION: Runs the simulation */
 function main() {
@@ -152,7 +152,7 @@ function checkScheduleHelper(schedule, conf) {
       
       // Mark games against FCS teams as green
       if (!(opponent in schedule)) {
-        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("limegreen");
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("#93c47d");
       }
       
       // Flag mismatching games against FBS teams as red
@@ -166,7 +166,7 @@ function checkScheduleHelper(schedule, conf) {
           opponentOpponent = opponentOpponent.substring(4, opponentOpponent.length);
         }
         if (team != opponentOpponent) {
-          sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("red");
+          sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("#e06666");
         }
       }
     }
@@ -176,8 +176,8 @@ function checkScheduleHelper(schedule, conf) {
 /* UTILITY FUNCTION: Sorts team ratings in descending order automatically */
 function onEdit(e) {
   const SHEET_NAME = "Ratings";
-  const SORT_DATA_RANGE = "D2:E131";
-  const SORT_ORDER = [{column: 5, ascending: false}];
+  const SORT_DATA_RANGE = "M2:N132";
+  const SORT_ORDER = [{column: 14, ascending: false}];
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(SHEET_NAME);
   const range = sheet.getRange(SORT_DATA_RANGE);
@@ -221,8 +221,7 @@ function clear(conf) {
       range0 = "G2:I" + (1 + confSize);
       break;
     case "CUSA":
-      range0 = "D" + (rowGroupOf5 + 2) + ":F" + (rowGroupOf5 + 1 + confSize / 2);
-      range1 = "D" + (rowGroupOf5 + 3 + confSize / 2) + ":F" + (rowGroupOf5 + 2 + confSize);
+      range0 = "D" + (rowGroupOf5 + 1) + ":F" + (rowGroupOf5 + confSize);
       break;
     case "MAC":
       range0 = "G" + (rowGroupOf5 + 2) + ":I" + (rowGroupOf5 + 1 + confSize / 2);
@@ -245,7 +244,7 @@ function clear(conf) {
       range1 = "M" + (4 + confSize / 2) + ":O" + (3 + confSize);
       break;
     case "IND":
-      range0 = "P2:R" + (1 + confSize);
+      range0 = "P2:Q" + (1 + confSize);
       break;
   }
   sheetStandings.getRange(range0).setValue("");
@@ -295,6 +294,10 @@ function simGames(schedule, standings, ratings, conf) {
     const team = teams[0][c];
     const teamSchedule = schedule[team];
     standings[conf][team] = {};
+
+    // UNCOMMENT TO SIM
+    break;
+
     for (let r = 0; r < teamSchedule.length; r++) {
       let opponent = teamSchedule[r].toUpperCase();
       
@@ -305,13 +308,17 @@ function simGames(schedule, standings, ratings, conf) {
       
       // If match has the hidden special ! character, team lost the match (manual pick)
       if (opponent.charAt(0) === "!") {
-        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("red");
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("#e06666");
+        // Print !
+        // console.log(team + " - " + opponent);
         continue;
       }
       
       // If match has the hidden special $ character, team won the match (manual pick)
       if (opponent.charAt(0) === "$") {
-        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("limegreen");
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("#93c47d");
+        // Print $
+        // console.log(team + " - " + opponent);
         continue;
       }
       
@@ -327,20 +334,25 @@ function simGames(schedule, standings, ratings, conf) {
       
       // Team is playing an FCS team (mark as a win)
       if (!(opponent in schedule)) {
-        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("limegreen");
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("#93c47d");
         continue;
       }
       
       let advantage = simGame(ratings, gameType, team, opponent);
       
+      // Print match
+      let advantageVal = Math.round(advantage * -10) / 10;
+      let advantageStr = advantageVal < 0 ? `${advantageVal}` : `+${advantageVal}`;
+      // console.log(`${team} (${advantageStr}) - ${teamSchedule[r]}`);
+      
       // Team lost the match
       if (advantage < 0) {
-        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("red");
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("#e06666");
       }
       
       // Team won the match
       else if (advantage > 0) {
-        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("limegreen");
+        sheet.getRange(r + 4 + numWeeksDone, c + 2).setBackground("#93c47d");
       }
       
       // Match is dead even - flag as yellow to manually pick later
@@ -384,6 +396,8 @@ function calculateRecords(standings, conf) {
     let numLossesOVR = 0;
     let numWinsCONF = 0;
     let numLossesCONF = 0;
+    // ZD_HERE
+    // for (let r = 0; r < 14; r++) {
     for (let r = 0; r < numWeeks; r++) {
       const result = sheet.getRange(r + 4, c + 2).getBackgroundColor();
       
@@ -394,23 +408,26 @@ function calculateRecords(standings, conf) {
       
       // Parse opposing team name
       let opponent = results[r][c].toUpperCase();
+      if (opponent.charAt(0) === '!' || opponent.charAt(0) === '$') {
+        opponent = opponent.substring(1, opponent.length);
+      }
       if (opponent.charAt(0) === '@') {
         opponent = opponent.substring(2, opponent.length);
       }
       else if (opponent.substring(0, 3) === "VS.") {
         opponent = opponent.substring(4, opponent.length);
       }
-      
-      // Team won the match
-      if (result === "#ff0000") {
+
+      // Team lost the match
+      if (result === "#e06666") {
         numLossesOVR++;
         if (opponent in standings[conf]) {
           numLossesCONF++;
         }
       }
       
-      // Team lost the match
-      else if (result === "#32cd32") {
+      // Team won the match
+      else if (result === "#93c47d") {
         numWinsOVR++;
         if (opponent in standings[conf]) {
           numWinsCONF++;
@@ -434,7 +451,7 @@ function calculateRecords(standings, conf) {
     standings[conf][team]["CONF Losses"] = numLossesCONF;
     
     // Don't show divisions for independents or conferences without divisions
-    if (conf === "AAC" || conf === "B12" || conf === "IND") {
+    if (conf === "AAC" || conf === "B12" || conf === "CUSA" || conf === "IND") {
       standings[conf][team]["Division"] = -1;
     }
     else {
@@ -458,16 +475,23 @@ function generateStandings(standings, conf) {
   let confStandings = standings[conf];
   let confTeams = Object.keys(confStandings);
   confTeams.sort(sortByRecord(confStandings));
-  if (conf === "AAC" || conf === "B12" || conf === "IND") {
-    let row = 2;
-    let col = 1;
+  if (conf === "AAC" || conf === "B12" || conf === "CUSA" || conf === "IND") {
+    let row;
+    let col;
     if (conf === "AAC") {
       row = 20;
+      col = 1;
     }
     if (conf === "B12") {
+      row = 2;
       col = 7;
     }
+    if (conf === "CUSA") {
+      row = 20;
+      col = 4;
+    }
     if (conf === "IND") {
+      row = 2;
       col = 16;
     }
     let confData = [];
@@ -477,19 +501,26 @@ function generateStandings(standings, conf) {
       let arr = [];
       arr.push(team);
       arr.push(teamRecords["OVR Wins"] + "-" + teamRecords["OVR Losses"]);
-      arr.push(teamRecords["CONF Wins"] + "-" + teamRecords["CONF Losses"]);
+      if (conf != "IND") {
+        arr.push(teamRecords["CONF Wins"] + "-" + teamRecords["CONF Losses"]);
+      }
       confData.push(arr);
     }
-    sheet.getRange(row, col, confSize, 3).setValues(confData);
+    if (conf === "IND") {
+      sheet.getRange(row, col, confSize, 2).setValues(confData);
+    }
+    else {
+      sheet.getRange(row, col, confSize, 3).setValues(confData);
+    }
   }
   else {
     let divARow = 3;
-    if (conf === "CUSA" || conf === "MAC" || conf === "MWC" || conf === "SBC") {
+    if (conf === "MAC" || conf === "MWC" || conf === "SBC") {
       divARow = 21;
     }
     let divBRow = divARow + confSize / 2 + 1;
     let col = 1;
-    if (conf === "B10" || conf === "CUSA") {
+    if (conf === "B10") {
       col = 4;
     }
     if (conf === "MAC") {
